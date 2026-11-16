@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🚀 Yahoo Finance Forecaster
+# Yahoo Finance Forecaster
 
 ### Platform Peramalan Deret Waktu (*Time Series*) Pasar Keuangan Berbasis Machine Learning — Tersedia dalam Edisi Terminal CLI & Desktop GUI.
 
