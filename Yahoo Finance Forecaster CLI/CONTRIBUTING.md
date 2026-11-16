@@ -2,7 +2,7 @@
 
 Terima kasih atas ketertarikan Anda untuk berkontribusi pada **Yahoo Finance Forecaster CLI**!
 
-## 🛠️ Pengaturan Lingkungan Pengembangan (*Development Setup*)
+## Pengaturan Lingkungan Pengembangan (*Development Setup*)
 
 1. Fork dan kloning repositori:
    ```bash
@@ -31,7 +31,7 @@ Terima kasih atas ketertarikan Anda untuk berkontribusi pada **Yahoo Finance For
 
 ---
 
-## 📌 Standar Kode
+## Standar Kode
 
 - Ikuti pedoman gaya kode **PEP 8**.
 - Buat komentar kode yang ringkas, jelas, dan informatif (jelaskan *mengapa*, bukan sekadar *apa* yang sudah jelas dari kode).
@@ -40,7 +40,7 @@ Terima kasih atas ketertarikan Anda untuk berkontribusi pada **Yahoo Finance For
 
 ---
 
-## 🚀 Alur Kerja Pull Request
+## Alur Kerja Pull Request
 
 1. Buat branch fitur baru:
    ```bash

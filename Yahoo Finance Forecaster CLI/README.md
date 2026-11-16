@@ -1,6 +1,6 @@
 <div align="center">
 
-# 📈 Yahoo Finance Forecaster CLI
+# Yahoo Finance Forecaster CLI
 
 ### Peramalan Deret Waktu (*Time Series Forecasting*) Berbasis Machine Learning Langsung dari Terminal Anda.
 
@@ -14,23 +14,23 @@
 
 ---
 
-## 📖 Daftar Isi
+## Daftar Isi
 
-- [Ringkasan](#-ringkasan)
-- [Fitur Utama](#-fitur-utama)
-- [Arsitektur & Alur Kerja](#-arsitektur--alur-kerja)
-- [Panduan Memulai Cepat](#-panduan-memulai-cepat)
+- [Ringkasan](#ringkasan)
+- [Fitur Utama](#fitur-utama)
+- [Arsitektur & Alur Kerja](#arsitektur--alur-kerja)
+- [Panduan Memulai Cepat](#panduan-memulai-cepat)
   - [Prasyarat](#prasyarat)
   - [Instalasi](#instalasi)
-- [Panduan Penggunaan](#-panduan-penggunaan)
-- [Konfigurasi Model](#-konfigurasi-model)
-- [Struktur Direktori](#-struktur-direktori)
-- [Kontribusi](#-kontribusi)
-- [Lisensi](#-lisensi)
+- [Panduan Penggunaan](#panduan-penggunaan)
+- [Konfigurasi Model](#konfigurasi-model)
+- [Struktur Direktori](#struktur-direktori)
+- [Kontribusi](#kontribusi)
+- [Lisensi](#lisensi)
 
 ---
 
-## 🌟 Ringkasan
+## Ringkasan
 
 **Yahoo Finance Forecaster CLI** adalah alat peramalan deret waktu berbasis terminal yang dirancang untuk trader, analis kuantitatif, dan praktisi data science. Alat ini mengambil data pasar keuangan secara *real-time* langsung dari Yahoo Finance dan menerapkan *machine learning* (**RandomForestRegressor** dengan strategi **ForecasterDirect**) untuk memproyeksikan harga aset di masa depan.
 
@@ -45,19 +45,19 @@
 
 ---
 
-## ✨ Fitur Utama
+## Fitur Utama
 
-- 🌐 **Mendukung Semua Ticker Global**: Bekerja mulus untuk seluruh aset Yahoo Finance, termasuk saham BEI/IDX Indonesia (`BBCA.JK`, `BBRI.JK`, `TLKM.JK`), saham teknologi global AS (`AAPL`, `NVDA`, `MSFT`), komoditas, indeks pasar, hingga mata uang kripto.
-- ⚡ **Cepat Tanpa Tuning Tambahan**: Menggunakan arsitektur optimal terverifikasi (10 Lags + 10 Rolling Means + 100 Trees) yang berlatih hanya dalam beberapa detik dengan akselerasi CPU multi-core (`n_jobs=-1`).
-- 🛡️ **Transformasi Stasioneritas Otomatis**: Diferensiasi tingkat pertama (Order-1 Differencing) untuk menghilangkan bias tren non-stasioner pada data harga mentah.
-- 📊 **Pop-up Grafik Resolusi Tinggi (HD)**:
+- **Mendukung Semua Ticker Global**: Bekerja mulus untuk seluruh aset Yahoo Finance, termasuk saham BEI/IDX Indonesia (`BBCA.JK`, `BBRI.JK`, `TLKM.JK`), saham teknologi global AS (`AAPL`, `NVDA`, `MSFT`), komoditas, indeks pasar, hingga mata uang kripto.
+- **Cepat Tanpa Tuning Tambahan**: Menggunakan arsitektur optimal terverifikasi (10 Lags + 10 Rolling Means + 100 Trees) yang berlatih hanya dalam beberapa detik dengan akselerasi CPU multi-core (`n_jobs=-1`).
+- **Transformasi Stasioneritas Otomatis**: Diferensiasi tingkat pertama (Order-1 Differencing) untuk menghilangkan bias tren non-stasioner pada data harga mentah.
+- **Pop-up Grafik Resolusi Tinggi (HD)**:
   1. **Grafik Atas**: Evaluasi Model (*Data Latih vs. Data Uji vs. Prediksi Validasi*).
   2. **Grafik Bawah**: Proyeksi Masa Depan (*Data Historis Penuh vs. Proyeksi Multi-Langkah*).
-- 📋 **Metrik Evaluasi Komprehensif**: Menampilkan Mean Absolute Error (MAE) dan Mean Absolute Percentage Error (MAPE).
+- **Metrik Evaluasi Komprehensif**: Menampilkan Mean Absolute Error (MAE) dan Mean Absolute Percentage Error (MAPE).
 
 ---
 
-## 🏗️ Arsitektur & Alur Kerja
+## Arsitektur & Alur Kerja
 
 ```mermaid
 flowchart LR
@@ -72,7 +72,7 @@ flowchart LR
 
 ---
 
-## 🚀 Panduan Memulai Cepat
+## Panduan Memulai Cepat
 
 ### Prasyarat
 
@@ -99,7 +99,7 @@ pip install -r requirements.txt
 
 ---
 
-## 💻 Panduan Penggunaan
+## Panduan Penggunaan
 
 Jalankan program CLI melalui terminal:
 
@@ -151,7 +151,7 @@ No    | Tanggal         | Prediksi Harga
 
 ---
 
-## ⚙️ Konfigurasi Model
+## Konfigurasi Model
 
 | Parameter | Nilai | Penjelasan Teknis |
 |---|---|---|
@@ -164,7 +164,7 @@ No    | Tanggal         | Prediksi Harga
 
 ---
 
-## 📁 Struktur Direktori
+## Struktur Direktori
 
 ```text
 .
@@ -178,12 +178,12 @@ No    | Tanggal         | Prediksi Harga
 
 ---
 
-## 🤝 Kontribusi
+## Kontribusi
 
 Kontribusi selalu terbuka dan diapresiasi! Silakan baca [CONTRIBUTING.md](CONTRIBUTING.md) untuk panduan pembuatan pull request, pelaporan bug, atau saran pengembangan fitur.
 
 ---
 
-## 📜 Lisensi
+## Lisensi
 
 Didistribusikan di bawah **MIT License**. Lihat [LICENSE](LICENSE) untuk teks hukum lengkap.

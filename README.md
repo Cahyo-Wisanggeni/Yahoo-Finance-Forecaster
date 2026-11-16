@@ -16,18 +16,18 @@
 
 ---
 
-## 📖 Daftar Isi
+## Daftar Isi
 
-- [Tentang Platform](#-tentang-platform)
-- [Perbandingan Edisi](#-perbandingan-edisi)
-- [Arsitektur Machine Learning](#-arsitektur-machine-learning)
-- [Panduan Memulai Cepat](#-panduan-memulai-cepat)
-- [Struktur Repositori](#-struktur-repositori)
-- [Lisensi](#-lisensi)
+- [Tentang Platform](#tentang-platform)
+- [Perbandingan Edisi](#perbandingan-edisi)
+- [Arsitektur Machine Learning](#arsitektur-machine-learning)
+- [Panduan Memulai Cepat](#panduan-memulai-cepat)
+- [Struktur Repositori](#struktur-repositori)
+- [Lisensi](#lisensi)
 
 ---
 
-## 🌟 Tentang Platform
+## Tentang Platform
 
 **Yahoo Finance Forecaster** adalah platform peramalan berbasis *machine learning open-source* yang dirancang untuk memproyeksikan pergerakan harga saham, indeks pasar, komoditas, dan aset digital menggunakan data historis yang diunduh langsung dari Yahoo Finance.
 
@@ -37,7 +37,7 @@ Platform ini hadir dalam dua edisi yang disesuaikan dengan preferensi alur kerja
 
 ---
 
-## ⚖️ Perbandingan Edisi
+## Perbandingan Edisi
 
 | Fitur | Edisi CLI | Edisi GUI |
 |---|:---:|:---:|
@@ -52,7 +52,7 @@ Platform ini hadir dalam dua edisi yang disesuaikan dengan preferensi alur kerja
 
 ---
 
-## 🏗️ Arsitektur Machine Learning
+## Arsitektur Machine Learning
 
 Kedua edisi mengimplementasikan arsitektur *machine learning* teruji yang dirancang untuk menghasilkan proyeksi multi-langkah (*multi-step forecast*) yang andal tanpa memerlukan pencarian hiperparameter (*hyperparameter tuning*) yang lambat:
 
@@ -75,7 +75,7 @@ flowchart LR
 
 ---
 
-## 🚀 Panduan Memulai Cepat
+## Panduan Memulai Cepat
 
 ### 1. Prasyarat Sistem
 - **Python 3.9+** (didukung penuh pada Python 3.10, 3.11, 3.12, dan 3.13).
@@ -116,7 +116,7 @@ python app.py
 
 ---
 
-## 📁 Struktur Repositori
+## Struktur Repositori
 
 ```text
 Yahoo-Finance-Forecaster/
@@ -145,6 +145,6 @@ Yahoo-Finance-Forecaster/
 
 ---
 
-## 📜 Lisensi
+## Lisensi
 
 [MIT - License](LICENSE)

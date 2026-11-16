@@ -1,6 +1,6 @@
 <div align="center">
 
-# 📊 Yahoo Finance Forecaster - GUI Edition
+# Yahoo Finance Forecaster - GUI Edition
 
 ### Aplikasi Desktop Modern untuk Peramalan Deret Waktu (*Time Series Forecasting*) Harga Saham Berbasis Machine Learning.
 
@@ -15,24 +15,24 @@
 
 ---
 
-## 📖 Daftar Isi
+## Daftar Isi
 
-- [Ringkasan](#-ringkasan)
-- [Fitur Utama](#-fitur-utama)
-- [Rincian Tab Aplikasi](#-rincian-tab-aplikasi)
-- [Arsitektur & Multi-Threading](#-arsitektur--multi-threading)
-- [Panduan Memulai Cepat](#-panduan-memulai-cepat)
+- [Ringkasan](#ringkasan)
+- [Fitur Utama](#fitur-utama)
+- [Rincian Tab Aplikasi](#rincian-tab-aplikasi)
+- [Arsitektur & Multi-Threading](#arsitektur--multi-threading)
+- [Panduan Memulai Cepat](#panduan-memulai-cepat)
   - [Prasyarat](#prasyarat)
   - [Instalasi](#instalasi)
   - [Menjalankan Aplikasi](#menjalankan-aplikasi)
-- [Konfigurasi Model](#-konfigurasi-model)
-- [Struktur Direktori](#-struktur-direktori)
-- [Kontribusi](#-kontribusi)
-- [Lisensi](#-lisensi)
+- [Konfigurasi Model](#konfigurasi-model)
+- [Struktur Direktori](#struktur-direktori)
+- [Kontribusi](#kontribusi)
+- [Lisensi](#lisensi)
 
 ---
 
-## 🌟 Ringkasan
+## Ringkasan
 
 **Yahoo Finance Forecaster GUI** menyajikan antarmuka grafis desktop modern yang elegan dan responsif untuk memproyeksikan harga saham, indeks pasar, komoditas, dan aset kripto menggunakan data langsung dari Yahoo Finance.
 
@@ -40,43 +40,43 @@ Ditenagai oleh **Random Forest Regressor** (100 pohon keputusan) dan framework *
 
 ---
 
-## ✨ Fitur Utama
+## Fitur Utama
 
-- 🖥️ **GUI Asli yang Ringan**: Dibangun menggunakan pustaka bawaan Python `tkinter` dan `ttk` dengan desain palet warna ungu-cyan modern. Tidak memerlukan dependensi UI pihak ketiga yang berat (seperti PyQt atau Electron).
-- 🧵 **Multi-Threading Bebas Macet (Non-Blocking)**: Seluruh beban komputasi berat (pengambilan data jaringan, pelatihan model, dan kalkulasi prediksi) berjalan secara asinkron di *background daemon thread*. Antarmuka tetap lancar dan tidak pernah memicu "Not Responding".
-- 🔠 **Input Ticker Cerdas**: Konversi otomatis huruf kapital secara *real-time* saat pengetikan. Otomatis mengenali Nama Perusahaan, Sektor, dan Industri secara langsung saat proses berjalan.
-- 📅 **Tombol Preset Tanggal Cepat**: Tombol sekali klik (`1 Tahun`, `2 Tahun`, `3 Tahun`, `5 Tahun`) untuk mengisi rentang tanggal historis secara instan.
-- 💾 **Ekspor Spreadsheet CSV**: Menyimpan seluruh baris hasil proyeksi peramalan ke format CSV (`prediksi_<ticker>_<timestamp>.csv`) untuk analisis lanjutan di Excel atau Google Sheets.
-- 🔄 **Fitur Reset Form Sekali Klik**: Tombol reset praktis untuk membersihkan seluruh kotak input dan mengembalikan tabel serta grafik ke kondisi awal.
+- **GUI Asli yang Ringan**: Dibangun menggunakan pustaka bawaan Python `tkinter` dan `ttk` dengan desain palet warna ungu-cyan modern. Tidak memerlukan dependensi UI pihak ketiga yang berat (seperti PyQt atau Electron).
+- **Multi-Threading Bebas Macet (Non-Blocking)**: Seluruh beban komputasi berat (pengambilan data jaringan, pelatihan model, dan kalkulasi prediksi) berjalan secara asinkron di *background daemon thread*. Antarmuka tetap lancar dan tidak pernah memicu "Not Responding".
+- **Input Ticker Cerdas**: Konversi otomatis huruf kapital secara *real-time* saat pengetikan. Otomatis mengenali Nama Perusahaan, Sektor, dan Industri secara langsung saat proses berjalan.
+- **Tombol Preset Tanggal Cepat**: Tombol sekali klik (`1 Tahun`, `2 Tahun`, `3 Tahun`, `5 Tahun`) untuk mengisi rentang tanggal historis secara instan.
+- **Ekspor Spreadsheet CSV**: Menyimpan seluruh baris hasil proyeksi peramalan ke format CSV (`prediksi_<ticker>_<timestamp>.csv`) untuk analisis lanjutan di Excel atau Google Sheets.
+- **Fitur Reset Form Sekali Klik**: Tombol reset praktis untuk membersihkan seluruh kotak input dan mengembalikan tabel serta grafik ke kondisi awal.
 
 ---
 
-## 📑 Rincian Tab Aplikasi
+## Rincian Tab Aplikasi
 
 Aplikasi mengorganisasi seluruh hasil analisis ke dalam empat tab khusus:
 
 ```text
 ┌────────────────────────────────────────────────────────────────────────┐
-│  📊 Grafik Prediksi  │  📋 Tabel Rincian  │  📝 Log  │  📖 Tutorial    │
+│   Grafik Prediksi  │   Tabel Rincian  │   Log  │   Tutorial    │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
-1. **📊 Grafik Prediksi**:
+1. ** Grafik Prediksi**:
    - Kanvas Matplotlib terintegrasi dengan dua grafik tersinkronisasi:
      - **Grafik Atas**: Evaluasi Model (*Data Latih vs. Data Uji vs. Prediksi Validasi*).
      - **Grafik Bawah**: Proyeksi Masa Depan (*Data Historis Penuh vs. Proyeksi Multi-Langkah*).
-   - Dilengkapi toolbar interaktif Matplotlib (Pan, Zoom, Konfigurasi Subplot, Simpan Gambar) dan tombol **🖥️ Tampilkan Jendela Pop-up HD** untuk inspeksi detail resolusi tinggi.
-2. **📋 Tabel Rincian Prediksi**:
+   - Dilengkapi toolbar interaktif Matplotlib (Pan, Zoom, Konfigurasi Subplot, Simpan Gambar) dan tombol ** Tampilkan Jendela Pop-up HD** untuk inspeksi detail resolusi tinggi.
+2. ** Tabel Rincian Prediksi**:
    - Tabel terstruktur berisi nomor urut, tanggal proyeksi, estimasi harga prediksi, nominal selisih harga, dan persentase perubahan terhadap harga penutupan terakhir.
-   - Dilengkapi tombol **💾 Ekspor Hasil ke CSV**.
-3. **📝 Log Komputasi**:
+   - Dilengkapi tombol ** Ekspor Hasil ke CSV**.
+3. ** Log Komputasi**:
    - Aliran log terminal *real-time* dengan penanda waktu (*timestamp*) akurat yang merinci proses download data, pemisahan sampel, dan metrik evaluasi model (MAE & MAPE).
-4. **📖 Tutorial**:
+4. ** Tutorial**:
    - Panduan komprehensif bawaan yang menjelaskan langkah-langkah penggunaan aplikasi dari awal hingga akhir.
 
 ---
 
-## 🏗️ Arsitektur & Multi-Threading
+## Arsitektur & Multi-Threading
 
 ```mermaid
 flowchart TD
@@ -100,7 +100,7 @@ flowchart TD
 
 ---
 
-## 🚀 Panduan Memulai Cepat
+## Panduan Memulai Cepat
 
 ### Prasyarat
 
@@ -140,7 +140,7 @@ python app.py
 
 ---
 
-## ⚙️ Konfigurasi Model
+## Konfigurasi Model
 
 | Parameter | Spesifikasi | Kegunaan |
 |---|---|---|
@@ -153,7 +153,7 @@ python app.py
 
 ---
 
-## 📁 Struktur Direktori
+## Struktur Direktori
 
 ```text
 .
@@ -169,12 +169,12 @@ python app.py
 
 ---
 
-## 🤝 Kontribusi
+## Kontribusi
 
 Kontribusi berupa laporan bug, masukan perbaikan UI/UX, maupun penambahan fitur baru sangat kami nantikan. Silakan pelajari panduan pada [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 
-## 📜 Lisensi
+## Lisensi
 
 Aplikasi ini didistribusikan di bawah naungan **MIT License**. Kunjungi file [LICENSE](LICENSE) untuk informasi legalitas selengkapnya.

@@ -2,7 +2,7 @@
 
 Terima kasih atas minat Anda untuk berkontribusi pada **Yahoo Finance Forecaster GUI**!
 
-## 🛠️ Pengaturan Lingkungan Pengembangan (*Development Setup*)
+## Pengaturan Lingkungan Pengembangan (*Development Setup*)
 
 1. Fork dan kloning repositori:
    ```bash
@@ -33,7 +33,7 @@ Terima kasih atas minat Anda untuk berkontribusi pada **Yahoo Finance Forecaster
 
 ---
 
-## 🎨 Pedoman Desain & Komponen GUI
+## Pedoman Desain & Komponen GUI
 
 - Aplikasi ini sengaja menggunakan pustaka bawaan `tkinter` dan `ttk` tanpa dependensi antarmuka eksternal yang berat (seperti Qt atau wxWidgets). Pertahankan komponen UI murni Tkinter + Matplotlib demi portabilitas lintas platform yang maksimal serta kemudahan instalasi.
 - Seluruh tugas yang memakan waktu (pengambilan data Yahoo Finance, pelatihan model *Random Forest*, peramalan *multi-step*) **wajib dijalankan dalam background daemon thread** agar antarmuka Tkinter tidak membeku (*freeze*).
@@ -41,7 +41,7 @@ Terima kasih atas minat Anda untuk berkontribusi pada **Yahoo Finance Forecaster
 
 ---
 
-## 🚀 Alur Kerja Pull Request
+## Alur Kerja Pull Request
 
 1. Buat branch fitur baru:
    ```bash
