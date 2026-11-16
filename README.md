@@ -2,7 +2,10 @@
 
   <img src="assets/logo_v2.png" alt="Yahoo! Finance Forecaster Logo" width="650"/>
 
-  <p><strong>Platform Peramalan Deret Waktu (<em>Time Series</em>) Pasar Keuangan Berbasis Machine Learning — Tersedia dalam Edisi Terminal CLI & Desktop GUI.</strong></p>
+  <p>
+    <strong>Platform Peramalan Deret Waktu (<em>Time Series</em>) Pasar Keuangan Berbasis Machine Learning</strong><br/>
+    <strong>Tersedia dalam Edisi Terminal CLI & Desktop GUI.</strong>
+  </p>
 
   <p>
     <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.9+-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python"/></a>
