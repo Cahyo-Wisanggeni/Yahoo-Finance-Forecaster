@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/logo.png" alt="Yahoo! Finance Forecaster Logo" width="600"/>
+<img src="assets/logo_v2.png" alt="Yahoo! Finance Forecaster Logo" width="600"/>
 
 ### Peramalan Deret Waktu (*Time Series Forecasting*) Berbasis Machine Learning Langsung dari Terminal Anda.
 
@@ -38,7 +38,7 @@
 ## Pratinjau Terminal
 
 <div align="center">
-  <img src="assets/cli_preview.png" alt="Pratinjau Terminal Yahoo Finance Forecaster CLI" width="800"/>
+  <img src="assets/cli_preview_v2.png" alt="Pratinjau Terminal Yahoo Finance Forecaster CLI" width="800"/>
 </div>
 
 ---

@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="assets/logo.png" alt="Yahoo! Finance Forecaster Logo" width="650"/>
+  <img src="assets/logo_v2.png" alt="Yahoo! Finance Forecaster Logo" width="650"/>
 
   <p><strong>Platform Peramalan Deret Waktu (<em>Time Series</em>) Pasar Keuangan Berbasis Machine Learning — Tersedia dalam Edisi Terminal CLI & Desktop GUI.</strong></p>
 
@@ -46,7 +46,7 @@ Platform ini hadir dalam dua edisi yang disesuaikan dengan preferensi alur kerja
 Antarmuka baris perintah yang interaktif, cepat, dan terstruktur langsung dari terminal:
 
 <div align="center">
-  <img src="assets/cli_preview.png" alt="Tampilan CLI Yahoo Finance Forecaster" width="850"/>
+  <img src="assets/cli_preview_v2.png" alt="Tampilan CLI Yahoo Finance Forecaster" width="850"/>
 </div>
 
 <br/>
@@ -55,7 +55,7 @@ Antarmuka baris perintah yang interaktif, cepat, dan terstruktur langsung dari t
 Aplikasi desktop modern lengkap dengan kontrol parameter, preset rentang tanggal instan, profil emiten, metrik evaluasi (MAPE & MAE), serta grafik proyeksi resolusi tinggi:
 
 <div align="center">
-  <img src="assets/gui_preview.png" alt="Tampilan GUI Yahoo Finance Forecaster" width="950"/>
+  <img src="assets/gui_preview_v2.png" alt="Tampilan GUI Yahoo Finance Forecaster" width="950"/>
 </div>
 
 ---

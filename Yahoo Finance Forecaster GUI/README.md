@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/logo.png" alt="Yahoo! Finance Forecaster Logo" width="600"/>
+<img src="assets/logo_v2.png" alt="Yahoo! Finance Forecaster Logo" width="600"/>
 
 ### Aplikasi Desktop Modern untuk Peramalan Deret Waktu (*Time Series Forecasting*) Harga Saham Berbasis Machine Learning.
 
@@ -42,7 +42,7 @@ Ditenagai oleh **Random Forest Regressor** (100 pohon keputusan) dan framework *
 ## Pratinjau Aplikasi
 
 <div align="center">
-  <img src="assets/gui_preview.png" alt="Pratinjau Antarmuka GUI Yahoo Finance Forecaster" width="900"/>
+  <img src="assets/gui_preview_v2.png" alt="Pratinjau Antarmuka GUI Yahoo Finance Forecaster" width="900"/>
 </div>
 
 ---
