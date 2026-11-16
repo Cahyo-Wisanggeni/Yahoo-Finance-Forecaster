@@ -1,16 +1,18 @@
 <div align="center">
 
-# Yahoo Finance Forecaster
+  <img src="assets/logo.png" alt="Yahoo! Finance Forecaster Logo" width="650"/>
 
-### Platform Peramalan Deret Waktu (*Time Series*) Pasar Keuangan Berbasis Machine Learning — Tersedia dalam Edisi Terminal CLI & Desktop GUI.
+  <p><strong>Platform Peramalan Deret Waktu (<em>Time Series</em>) Pasar Keuangan Berbasis Machine Learning — Tersedia dalam Edisi Terminal CLI & Desktop GUI.</strong></p>
 
-[![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/Lisensi-MIT-yellow.svg?style=flat-square)](LICENSE)
-[![Tkinter](https://img.shields.io/badge/Tkinter-3776AB?style=flat-square&logo=python&logoColor=white)](https://docs.python.org/3/library/tkinter.html)
-[![Matplotlib](https://img.shields.io/badge/Matplotlib-11557C?style=flat-square&logo=matplotlib&logoColor=white)](https://matplotlib.org/)
-[![Scikit-Learn](https://img.shields.io/badge/Scikit_Learn-F7931E?style=flat-square&logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
-[![Framework: skforecast](https://img.shields.io/badge/Framework-skforecast-0284C7?style=flat-square)](https://skforecast.org/)
-[![Data: Yahoo Finance](https://img.shields.io/badge/Data-Yahoo_Finance-7C3AED?style=flat-square)](https://finance.yahoo.com/)
+  <p>
+    <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.9+-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python"/></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/Lisensi-MIT-yellow.svg?style=flat-square" alt="MIT License"/></a>
+    <a href="https://docs.python.org/3/library/tkinter.html"><img src="https://img.shields.io/badge/Tkinter-3776AB?style=flat-square&logo=python&logoColor=white" alt="Tkinter"/></a>
+    <a href="https://matplotlib.org/"><img src="https://img.shields.io/badge/Matplotlib-11557C?style=flat-square&logo=matplotlib&logoColor=white" alt="Matplotlib"/></a>
+    <a href="https://scikit-learn.org/"><img src="https://img.shields.io/badge/Scikit_Learn-F7931E?style=flat-square&logo=scikit-learn&logoColor=white" alt="Scikit-Learn"/></a>
+    <a href="https://skforecast.org/"><img src="https://img.shields.io/badge/Framework-skforecast-0284C7?style=flat-square" alt="skforecast"/></a>
+    <a href="https://finance.yahoo.com/"><img src="https://img.shields.io/badge/Data-Yahoo_Finance-7C3AED?style=flat-square" alt="Yahoo Finance"/></a>
+  </p>
 
 </div>
 
@@ -19,6 +21,7 @@
 ## Daftar Isi
 
 - [Tentang Platform](#tentang-platform)
+- [Pratinjau Antarmuka](#pratinjau-antarmuka)
 - [Perbandingan Edisi](#perbandingan-edisi)
 - [Arsitektur Machine Learning](#arsitektur-machine-learning)
 - [Panduan Memulai Cepat](#panduan-memulai-cepat)
@@ -34,6 +37,26 @@
 Platform ini hadir dalam dua edisi yang disesuaikan dengan preferensi alur kerja Anda:
 1. **[Yahoo Finance Forecaster CLI](Yahoo%20Finance%20Forecaster%20CLI)**: Alat terminal ringan dan sangat cepat, ideal untuk otomatisasi, lingkungan server, dan pengguna yang mengutamakan efisiensi keyboard.
 2. **[Yahoo Finance Forecaster GUI](Yahoo%20Finance%20Forecaster%20GUI)**: Aplikasi desktop interaktif dengan visualisasi grafik tersinkronisasi, komputasi *multi-threaded* (bebas freeze), tabel rincian prediksi beserta perubahan harga, ekspor CSV, dan tab tutorial terintegrasi.
+
+---
+
+## Pratinjau Antarmuka
+
+### 1. Edisi Terminal CLI
+Antarmuka baris perintah yang interaktif, cepat, dan terstruktur langsung dari terminal:
+
+<div align="center">
+  <img src="assets/cli_preview.png" alt="Tampilan CLI Yahoo Finance Forecaster" width="850"/>
+</div>
+
+<br/>
+
+### 2. Edisi Desktop GUI (Edisi v1.0)
+Aplikasi desktop modern lengkap dengan kontrol parameter, preset rentang tanggal instan, profil emiten, metrik evaluasi (MAPE & MAE), serta grafik proyeksi resolusi tinggi:
+
+<div align="center">
+  <img src="assets/gui_preview.png" alt="Tampilan GUI Yahoo Finance Forecaster" width="950"/>
+</div>
 
 ---
 
@@ -123,8 +146,15 @@ Yahoo-Finance-Forecaster/
 ├── .gitignore                          # Aturan abaikan Git global
 ├── LICENSE                             # Lisensi MIT
 ├── README.md                           # Dokumentasi utama proyek
+├── assets/                             # Tangkapan layar & logo visual
+│   ├── logo.png
+│   ├── cli_preview.png
+│   └── gui_preview.png
 │
 ├── Yahoo Finance Forecaster CLI/       # Edisi Terminal (CLI)
+│   ├── assets/
+│   │   ├── logo.png
+│   │   └── cli_preview.png
 │   ├── .gitignore
 │   ├── CONTRIBUTING.md
 │   ├── LICENSE
@@ -133,6 +163,9 @@ Yahoo-Finance-Forecaster/
 │   └── main.py
 │
 └── Yahoo Finance Forecaster GUI/       # Edisi Grafis Desktop (GUI)
+    ├── assets/
+    │   ├── logo.png
+    │   └── gui_preview.png
     ├── .gitignore
     ├── CONTRIBUTING.md
     ├── LICENSE
@@ -147,4 +180,4 @@ Yahoo-Finance-Forecaster/
 
 ## Lisensi
 
-[MIT - License](LICENSE)
+Didistribusikan di bawah lisensi [MIT License](LICENSE).

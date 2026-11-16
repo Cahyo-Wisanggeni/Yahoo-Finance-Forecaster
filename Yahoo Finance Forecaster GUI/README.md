@@ -1,6 +1,6 @@
 <div align="center">
 
-# Yahoo Finance Forecaster - GUI Edition
+<img src="assets/logo.png" alt="Yahoo! Finance Forecaster Logo" width="600"/>
 
 ### Aplikasi Desktop Modern untuk Peramalan Deret Waktu (*Time Series Forecasting*) Harga Saham Berbasis Machine Learning.
 
@@ -18,6 +18,7 @@
 ## Daftar Isi
 
 - [Ringkasan](#ringkasan)
+- [Pratinjau Aplikasi](#pratinjau-aplikasi)
 - [Fitur Utama](#fitur-utama)
 - [Rincian Tab Aplikasi](#rincian-tab-aplikasi)
 - [Arsitektur & Multi-Threading](#arsitektur--multi-threading)
@@ -37,6 +38,12 @@
 **Yahoo Finance Forecaster GUI** menyajikan antarmuka grafis desktop modern yang elegan dan responsif untuk memproyeksikan harga saham, indeks pasar, komoditas, dan aset kripto menggunakan data langsung dari Yahoo Finance.
 
 Ditenagai oleh **Random Forest Regressor** (100 pohon keputusan) dan framework **skforecast** (`ForecasterDirect`), aplikasi ini menggabungkan variabel lag autoregresif ($t-1 \dots t-10$) dengan rata-rata bergerak (*rolling window averages* $1 \dots 10$) serta diferensiasi ordo pertama untuk menghasilkan proyeksi harga multi-langkah ke depan yang akurat dan stabil.
+
+## Pratinjau Aplikasi
+
+<div align="center">
+  <img src="assets/gui_preview.png" alt="Pratinjau Antarmuka GUI Yahoo Finance Forecaster" width="900"/>
+</div>
 
 ---
 

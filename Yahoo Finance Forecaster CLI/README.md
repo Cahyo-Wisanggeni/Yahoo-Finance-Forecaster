@@ -1,6 +1,6 @@
 <div align="center">
 
-# Yahoo Finance Forecaster CLI
+<img src="assets/logo.png" alt="Yahoo! Finance Forecaster Logo" width="600"/>
 
 ### Peramalan Deret Waktu (*Time Series Forecasting*) Berbasis Machine Learning Langsung dari Terminal Anda.
 
@@ -17,6 +17,7 @@
 ## Daftar Isi
 
 - [Ringkasan](#ringkasan)
+- [Pratinjau Terminal](#pratinjau-terminal)
 - [Fitur Utama](#fitur-utama)
 - [Arsitektur & Alur Kerja](#arsitektur--alur-kerja)
 - [Panduan Memulai Cepat](#panduan-memulai-cepat)
@@ -34,14 +35,11 @@
 
 **Yahoo Finance Forecaster CLI** adalah alat peramalan deret waktu berbasis terminal yang dirancang untuk trader, analis kuantitatif, dan praktisi data science. Alat ini mengambil data pasar keuangan secara *real-time* langsung dari Yahoo Finance dan menerapkan *machine learning* (**RandomForestRegressor** dengan strategi **ForecasterDirect**) untuk memproyeksikan harga aset di masa depan.
 
-```text
-  █ █ █▀█ █ █ █▀█ █▀█ █
-   █  █▀█ █▀█ █ █ █ █ ▀
-   ▀  ▀ ▀ ▀ ▀ ▀▀▀ ▀▀▀ ▀
-  █▀▀ █ █▀▄ █▀█ █▀▄ █▀▀ █▀▀    █▀▀ █▀█ █▀▄ █▀▀ █▀▀ █▀█ █▀▀ ▀█▀ █▀▀ █▀▄
-  █▀  █ █ █ █▀█ █ █ █   █▀     █▀  █ █ █▀▄ █▀  █   █▀█ ▀▀█  █  █▀  █▀▄
-  ▀   ▀ ▀ ▀ ▀ ▀ ▀ ▀ ▀▀▀ ▀▀▀    ▀   ▀▀▀ ▀ ▀ ▀▀▀ ▀▀▀ ▀ ▀ ▀▀▀  ▀  ▀▀▀ ▀ ▀
-```
+## Pratinjau Terminal
+
+<div align="center">
+  <img src="assets/cli_preview.png" alt="Pratinjau Terminal Yahoo Finance Forecaster CLI" width="800"/>
+</div>
 
 ---
 
