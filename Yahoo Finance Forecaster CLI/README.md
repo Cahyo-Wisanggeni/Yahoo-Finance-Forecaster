@@ -7,9 +7,8 @@
 [![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/Lisensi-MIT-yellow.svg?style=flat-square)](LICENSE)
 [![Framework: skforecast](https://img.shields.io/badge/Framework-skforecast-0284C7?style=flat-square)](https://skforecast.org/)
-[![Estimator: RandomForest](https://img.shields.io/badge/Model-RandomForest_100_Trees-10B981?style=flat-square)](https://scikit-learn.org/)
+[![Estimator: RandomForest](https://img.shields.io/badge/Scikit_Learn-F7931E?style=flat-square&logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
 [![Data: Yahoo Finance](https://img.shields.io/badge/Data-Yahoo_Finance-7C3AED?style=flat-square)](https://finance.yahoo.com/)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](CONTRIBUTING.md)
 
 </div>
 

@@ -1,15 +1,16 @@
 <div align="center">
 
-# 🚀 Yahoo Finance Forecaster Suite
+# 🚀 Yahoo Finance Forecaster
 
-### Platform Peramalan Deret Waktu (*Time Series*) Pasar Keuangan Berbasis Machine Learning — Tersedia dalam Edisi Terminal CLI & Desktop GUI Modern.
+### Platform Peramalan Deret Waktu (*Time Series*) Pasar Keuangan Berbasis Machine Learning — Tersedia dalam Edisi Terminal CLI & Desktop GUI.
 
 [![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/Lisensi-MIT-yellow.svg?style=flat-square)](LICENSE)
+[![Tkinter](https://img.shields.io/badge/Tkinter-3776AB?style=flat-square&logo=python&logoColor=white)](https://docs.python.org/3/library/tkinter.html)
+[![Matplotlib](https://img.shields.io/badge/Matplotlib-11557C?style=flat-square&logo=matplotlib&logoColor=white)](https://matplotlib.org/)
+[![Scikit-Learn](https://img.shields.io/badge/Scikit_Learn-F7931E?style=flat-square&logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
 [![Framework: skforecast](https://img.shields.io/badge/Framework-skforecast-0284C7?style=flat-square)](https://skforecast.org/)
-[![Estimator: RandomForest](https://img.shields.io/badge/Model-RandomForest_100_Trees-10B981?style=flat-square)](https://scikit-learn.org/)
 [![Data: Yahoo Finance](https://img.shields.io/badge/Data-Yahoo_Finance-7C3AED?style=flat-square)](https://finance.yahoo.com/)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/Cahyo-Wisanggeni/Yahoo-Finance-Forecaster/pulls)
 
 </div>
 
@@ -28,7 +29,7 @@
 
 ## 🌟 Tentang Platform
 
-**Yahoo Finance Forecaster Suite** adalah platform peramalan berbasis *machine learning open-source* yang dirancang untuk memproyeksikan pergerakan harga saham, indeks pasar, komoditas, dan aset digital menggunakan data historis yang diunduh langsung dari Yahoo Finance.
+**Yahoo Finance Forecaster** adalah platform peramalan berbasis *machine learning open-source* yang dirancang untuk memproyeksikan pergerakan harga saham, indeks pasar, komoditas, dan aset digital menggunakan data historis yang diunduh langsung dari Yahoo Finance.
 
 Platform ini hadir dalam dua edisi yang disesuaikan dengan preferensi alur kerja Anda:
 1. **[Yahoo Finance Forecaster CLI](Yahoo%20Finance%20Forecaster%20CLI)**: Alat terminal ringan dan sangat cepat, ideal untuk otomatisasi, lingkungan server, dan pengguna yang mengutamakan efisiensi keyboard.
@@ -38,7 +39,7 @@ Platform ini hadir dalam dua edisi yang disesuaikan dengan preferensi alur kerja
 
 ## ⚖️ Perbandingan Edisi
 
-| Fitur | 📈 Edisi CLI | 📊 Edisi GUI |
+| Fitur | Edisi CLI | Edisi GUI |
 |---|:---:|:---:|
 | **Antarmuka** | Baris Perintah (*Terminal*) | Antarmuka Grafis Desktop (*GUI*) |
 | **Teknologi** | Python Murni + Format ANSI | Tkinter + TTK + Matplotlib Canvas |
@@ -146,4 +147,4 @@ Yahoo-Finance-Forecaster/
 
 ## 📜 Lisensi
 
-Proyek ini didistribusikan di bawah lisensi terbuka **MIT License** — silakan baca file [LICENSE](LICENSE) untuk informasi legalitas selengkapnya.
+[MIT - License](LICENSE)

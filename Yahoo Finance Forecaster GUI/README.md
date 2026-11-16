@@ -8,7 +8,7 @@
 [![UI: Tkinter](https://img.shields.io/badge/UI-Tkinter_%2F_TTK-FFD43B?style=flat-square&logo=python&logoColor=3776AB)](https://docs.python.org/3/library/tkinter.html)
 [![License: MIT](https://img.shields.io/badge/Lisensi-MIT-yellow.svg?style=flat-square)](LICENSE)
 [![Framework: skforecast](https://img.shields.io/badge/Framework-skforecast-0284C7?style=flat-square)](https://skforecast.org/)
-[![Model: RandomForest](https://img.shields.io/badge/Model-RandomForest_100_Trees-10B981?style=flat-square)](https://scikit-learn.org/)
+[![Model: RandomForest](https://img.shields.io/badge/Scikit_Learn-F7931E?style=flat-square&logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-blue?style=flat-square)](https://github.com/)
 
 </div>
