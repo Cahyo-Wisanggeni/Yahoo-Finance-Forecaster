@@ -68,17 +68,17 @@ Aplikasi mengorganisasi seluruh hasil analisis ke dalam empat tab khusus:
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
-1. ** Grafik Prediksi**:
+1. **Grafik Prediksi**:
    - Kanvas Matplotlib terintegrasi dengan dua grafik tersinkronisasi:
      - **Grafik Atas**: Evaluasi Model (*Data Latih vs. Data Uji vs. Prediksi Validasi*).
      - **Grafik Bawah**: Proyeksi Masa Depan (*Data Historis Penuh vs. Proyeksi Multi-Langkah*).
-   - Dilengkapi toolbar interaktif Matplotlib (Pan, Zoom, Konfigurasi Subplot, Simpan Gambar) dan tombol ** Tampilkan Jendela Pop-up HD** untuk inspeksi detail resolusi tinggi.
-2. ** Tabel Rincian Prediksi**:
+   - Dilengkapi toolbar interaktif Matplotlib (Pan, Zoom, Konfigurasi Subplot, Simpan Gambar) dan tombol **Tampilkan Jendela Pop-up HD** untuk inspeksi detail resolusi tinggi.
+2. **Tabel Rincian Prediksi**:
    - Tabel terstruktur berisi nomor urut, tanggal proyeksi, estimasi harga prediksi, nominal selisih harga, dan persentase perubahan terhadap harga penutupan terakhir.
-   - Dilengkapi tombol ** Ekspor Hasil ke CSV**.
-3. ** Log Komputasi**:
+   - Dilengkapi tombol **Ekspor Hasil ke CSV**.
+3. **Log Komputasi**:
    - Aliran log terminal *real-time* dengan penanda waktu (*timestamp*) akurat yang merinci proses download data, pemisahan sampel, dan metrik evaluasi model (MAE & MAPE).
-4. ** Tutorial**:
+4. **Tutorial**:
    - Panduan komprehensif bawaan yang menjelaskan langkah-langkah penggunaan aplikasi dari awal hingga akhir.
 
 ---
