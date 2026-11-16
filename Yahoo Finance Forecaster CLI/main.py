@@ -74,21 +74,21 @@ def plot_combined_results_popup(train, test, val_predictions, data, final_predic
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8.5), facecolor='white')
 
     # 1. Subplot Atas: Evaluasi Train vs Test vs Predictions
-    train.plot(ax=ax1, label='train', color='#1f77b4', linewidth=1.5)
-    test.plot(ax=ax1, label='test', color='#2ca02c', linewidth=1.5)
-    val_predictions.plot(ax=ax1, label='predictions', color='#ff7f0e', linewidth=1.5)
+    train.plot(ax=ax1, label='Data Latih', color='#1f77b4', linewidth=1.5)
+    test.plot(ax=ax1, label='Data Uji', color='#2ca02c', linewidth=1.5)
+    val_predictions.plot(ax=ax1, label='Prediksi', color='#ff7f0e', linewidth=1.5)
     ax1.set_title(f"Evaluasi Peramalan ({ticker})", fontsize=11, pad=8, fontweight='bold')
-    ax1.set_xlabel("Date", fontsize=9)
-    ax1.set_ylabel("Price", fontsize=9)
+    ax1.set_xlabel("Tanggal", fontsize=9)
+    ax1.set_ylabel("Harga", fontsize=9)
     ax1.legend(loc='upper left', fontsize=9)
     ax1.grid(True, linestyle='--', alpha=0.4)
 
     # 2. Subplot Bawah: Data Historis vs Hasil Prediksi Akhir
-    data.plot(ax=ax2, label='data', color='#1f77b4', linewidth=1.5)
-    final_predictions.plot(ax=ax2, label='predictions', color='#ff7f0e', linewidth=1.5)
+    data.plot(ax=ax2, label='Data Historis', color='#1f77b4', linewidth=1.5)
+    final_predictions.plot(ax=ax2, label='Prediksi', color='#ff7f0e', linewidth=1.5)
     ax2.set_title(f"Hasil Peramalan Akhir ({ticker})", fontsize=11, pad=8, fontweight='bold')
-    ax2.set_xlabel("Date", fontsize=9)
-    ax2.set_ylabel("Price", fontsize=9)
+    ax2.set_xlabel("Tanggal", fontsize=9)
+    ax2.set_ylabel("Harga", fontsize=9)
     ax2.legend(loc='upper left', fontsize=9)
     ax2.grid(True, linestyle='--', alpha=0.3)
 
@@ -160,10 +160,10 @@ def main():
 
         break
 
-    # Input Start Date & End Date
+    # Input Tanggal Mulai & Tanggal Selesai
     print()
-    start_date = parse_date_input("Start Date (YYYY-MM-DD)")
-    end_date = parse_date_input("End Date (YYYY-MM-DD)  ")
+    start_date = parse_date_input("Tanggal Mulai (YYYY-MM-DD)")
+    end_date = parse_date_input("Tanggal Selesai (YYYY-MM-DD)")
 
     # Input Frekuensi
     while True:
@@ -175,17 +175,17 @@ def main():
 
     # Input steps
     while True:
-        steps_in = input("\nForecast Steps: ").strip()
+        steps_in = input("\nJumlah Periode Prediksi (Steps): ").strip()
         if not steps_in:
-            print("[!] Forecast Steps tidak boleh kosong.")
+            print("[!] Jumlah periode prediksi tidak boleh kosong.")
             continue
         try:
             steps = int(steps_in)
             if steps > 0:
                 break
-            print("[!] Forecast Steps harus lebih besar dari 0.")
+            print("[!] Jumlah periode prediksi harus lebih besar dari 0.")
         except ValueError:
-            print("[!] Forecast Steps harus berupa angka bulat (integer).")
+            print("[!] Jumlah periode prediksi harus berupa angka bulat (integer).")
 
     # ---------------------------------------------------------
     # 2. PROSES KOMPUTASI
@@ -209,10 +209,10 @@ def main():
         f"Nama           : {nama_perusahaan}",
         f"Sektor         : {sektor}",
         f"Industri       : {industri}",
-        f"Start Date     : {start_date}",
-        f"End Date       : {end_date}",
+        f"Tanggal Mulai  : {start_date}",
+        f"Tanggal Selesai: {end_date}",
         f"Frekuensi      : {freq_desc}",
-        f"Forecast Steps : {steps}"
+        f"Periode (Steps): {steps}"
     ]
     w_info = max(52, max(len(l) for l in info_lines) + 6)
     try:

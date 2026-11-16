@@ -141,12 +141,12 @@ class YahooForecasterGUI(tk.Tk):
         lbl_title = ttk.Label(header_content, text="Yahoo! Finance Forecaster", style="Header.TLabel")
         lbl_title.pack(anchor="w")
 
-        lbl_subtitle = ttk.Label(header_content, text="Machine Learning Time Series Forecasting", style="HeaderSub.TLabel")
+        lbl_subtitle = ttk.Label(header_content, text="Peramalan Deret Waktu Pasar Keuangan Berbasis Machine Learning", style="HeaderSub.TLabel")
         lbl_subtitle.pack(anchor="w", pady=(3, 0))
 
         badge_frame = tk.Frame(header_frame, bg=self.colors["primary"])
         badge_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=22, pady=22)
-        lbl_version = tk.Label(badge_frame, text="GUI EDITION v1.0", bg=self.colors["primary_dark"], fg="#A7F3D0", font=("Segoe UI", 8, "bold"), padx=10, pady=4)
+        lbl_version = tk.Label(badge_frame, text="EDISI GUI v1.0", bg=self.colors["primary_dark"], fg="#A7F3D0", font=("Segoe UI", 8, "bold"), padx=10, pady=4)
         lbl_version.pack()
 
         # ----------------------------------------------------
@@ -200,9 +200,9 @@ class YahooForecasterGUI(tk.Tk):
         dates_grid = tk.Frame(cfg_inner, bg=self.colors["card_bg"])
         dates_grid.pack(fill=tk.X, pady=(0, 8))
 
-        lbl_start = tk.Label(dates_grid, text="Start Date (YYYY-MM-DD):", bg=self.colors["card_bg"], font=("Segoe UI", 8), fg=self.colors["text_muted"])
+        lbl_start = tk.Label(dates_grid, text="Tanggal Mulai (YYYY-MM-DD):", bg=self.colors["card_bg"], font=("Segoe UI", 8), fg=self.colors["text_muted"])
         lbl_start.grid(row=0, column=0, sticky="w", padx=(0, 4))
-        lbl_end = tk.Label(dates_grid, text="End Date (YYYY-MM-DD):", bg=self.colors["card_bg"], font=("Segoe UI", 8), fg=self.colors["text_muted"])
+        lbl_end = tk.Label(dates_grid, text="Tanggal Selesai (YYYY-MM-DD):", bg=self.colors["card_bg"], font=("Segoe UI", 8), fg=self.colors["text_muted"])
         lbl_end.grid(row=0, column=1, sticky="w", padx=(4, 0))
 
         self.ent_start = ttk.Entry(dates_grid, font=("Segoe UI", 9))
@@ -219,7 +219,7 @@ class YahooForecasterGUI(tk.Tk):
 
         lbl_freq = tk.Label(params_grid, text="Jenis Frekuensi Data:", bg=self.colors["card_bg"], font=("Segoe UI", 8), fg=self.colors["text_muted"])
         lbl_freq.grid(row=0, column=0, sticky="w", padx=(0, 4))
-        lbl_steps = tk.Label(params_grid, text="Forecast Steps:", bg=self.colors["card_bg"], font=("Segoe UI", 8), fg=self.colors["text_muted"])
+        lbl_steps = tk.Label(params_grid, text="Periode Prediksi (Steps):", bg=self.colors["card_bg"], font=("Segoe UI", 8), fg=self.colors["text_muted"])
         lbl_steps.grid(row=0, column=1, sticky="w", padx=(4, 0))
 
         self.cmb_freq = ttk.Combobox(params_grid, values=["B (Business Days)", "D (Days)"], state="readonly", font=("Segoe UI", 9))
@@ -266,13 +266,13 @@ class YahooForecasterGUI(tk.Tk):
         self.lbl_comp_ind = tk.Label(self.info_container, text="Industri: -", bg=self.colors["card_bg"], font=("Segoe UI", 8), fg=self.colors["text_muted"], anchor="w")
         self.lbl_comp_ind.pack(fill=tk.X, pady=1)
 
-        self.lbl_comp_dates = tk.Label(self.info_container, text="Rentang: -", bg=self.colors["card_bg"], font=("Segoe UI", 8), fg=self.colors["text_muted"], anchor="w")
+        self.lbl_comp_dates = tk.Label(self.info_container, text="Rentang Tanggal: -", bg=self.colors["card_bg"], font=("Segoe UI", 8), fg=self.colors["text_muted"], anchor="w")
         self.lbl_comp_dates.pack(fill=tk.X, pady=1)
 
         self.lbl_comp_freq = tk.Label(self.info_container, text="Frekuensi: -", bg=self.colors["card_bg"], font=("Segoe UI", 8), fg=self.colors["text_muted"], anchor="w")
         self.lbl_comp_freq.pack(fill=tk.X, pady=1)
 
-        self.lbl_comp_steps = tk.Label(self.info_container, text="Forecast Steps: -", bg=self.colors["card_bg"], font=("Segoe UI", 8), fg=self.colors["text_muted"], anchor="w")
+        self.lbl_comp_steps = tk.Label(self.info_container, text="Periode Prediksi (Steps): -", bg=self.colors["card_bg"], font=("Segoe UI", 8), fg=self.colors["text_muted"], anchor="w")
         self.lbl_comp_steps.pack(fill=tk.X, pady=1)
 
         sep = ttk.Separator(self.info_container, orient="horizontal")
@@ -364,7 +364,7 @@ class YahooForecasterGUI(tk.Tk):
         self.ax1.text(0.5, 0.5, "Klik 'MULAI PERAMALAN' untuk menghasilkan grafik evaluasi model.",
                       horizontalalignment='center', verticalalignment='center', transform=self.ax1.transAxes,
                       color='#94A3B8', fontsize=11, style='italic')
-        self.ax1.set_title("1. Evaluasi Model (Train vs Test vs Predictions)", fontsize=10, fontweight='bold', pad=8)
+        self.ax1.set_title("1. Evaluasi Model (Data Latih vs Data Uji vs Prediksi)", fontsize=10, fontweight='bold', pad=8)
         self.ax1.grid(True, linestyle='--', alpha=0.3)
 
         self.ax2.text(0.5, 0.5, "Grafik peramalan akhir akan ditampilkan di sini.",
@@ -570,11 +570,11 @@ class YahooForecasterGUI(tk.Tk):
         self.lbl_comp_sector.config(text=f"Sektor: {sector}")
         self.lbl_comp_ind.config(text=f"Industri: {industry}")
         if start_date and end_date:
-            self.lbl_comp_dates.config(text=f"Rentang: {start_date} s/d {end_date}")
+            self.lbl_comp_dates.config(text=f"Rentang Tanggal: {start_date} s/d {end_date}")
         if freq_desc:
             self.lbl_comp_freq.config(text=f"Frekuensi: {freq_desc}")
         if steps:
-            self.lbl_comp_steps.config(text=f"Forecast Steps: {steps}")
+            self.lbl_comp_steps.config(text=f"Periode Prediksi: {steps} steps")
 
     def _action_start_forecast(self):
         if self.is_running:
@@ -593,20 +593,20 @@ class YahooForecasterGUI(tk.Tk):
             return
 
         if not start_date:
-            messagebox.showerror("Error Input", "Start Date tidak boleh kosong.\nFormat: YYYY-MM-DD (contoh: 2024-01-01) atau gunakan tombol preset tanggal di atas.")
+            messagebox.showerror("Error Input", "Tanggal Mulai tidak boleh kosong.\nFormat: YYYY-MM-DD (contoh: 2024-01-01) atau gunakan tombol preset tanggal di atas.")
             return
 
         if not end_date:
-            messagebox.showerror("Error Input", "End Date tidak boleh kosong.\nFormat: YYYY-MM-DD (contoh: 2025-01-01) atau gunakan tombol preset tanggal di atas.")
+            messagebox.showerror("Error Input", "Tanggal Selesai tidak boleh kosong.\nFormat: YYYY-MM-DD (contoh: 2025-01-01) atau gunakan tombol preset tanggal di atas.")
             return
 
         if start_date >= end_date:
-            messagebox.showerror("Error Input", "Start Date harus lebih awal daripada End Date.")
+            messagebox.showerror("Error Input", "Tanggal Mulai harus lebih awal daripada Tanggal Selesai.")
             return
 
         steps_raw = self.spn_steps.get().strip()
         if not steps_raw:
-            messagebox.showerror("Error Input", "Forecast Steps tidak boleh kosong.\nSilakan masukkan jumlah langkah peramalan (contoh: 30).")
+            messagebox.showerror("Error Input", "Periode Prediksi (Steps) tidak boleh kosong.\nSilakan masukkan jumlah langkah peramalan (contoh: 30).")
             return
 
         try:
@@ -614,7 +614,7 @@ class YahooForecasterGUI(tk.Tk):
             if steps <= 0:
                 raise ValueError()
         except ValueError:
-            messagebox.showerror("Error Input", "Forecast Steps harus berupa angka bulat positif lebih besar dari 0.")
+            messagebox.showerror("Error Input", "Periode Prediksi (Steps) harus berupa angka bulat positif lebih besar dari 0.")
             return
 
         # Start execution in background thread
@@ -782,9 +782,9 @@ class YahooForecasterGUI(tk.Tk):
         self.lbl_comp_name.config(text="Nama: -")
         self.lbl_comp_sector.config(text="Sektor: -")
         self.lbl_comp_ind.config(text="Industri: -")
-        self.lbl_comp_dates.config(text="Rentang: -")
+        self.lbl_comp_dates.config(text="Rentang Tanggal: -")
         self.lbl_comp_freq.config(text="Frekuensi: -")
-        self.lbl_comp_steps.config(text="Forecast Steps: -")
+        self.lbl_comp_steps.config(text="Periode Prediksi (Steps): -")
 
         # 3. Reset metrik evaluasi
         self.lbl_mape.config(text="- %")
@@ -857,21 +857,21 @@ class YahooForecasterGUI(tk.Tk):
         self.ax2.clear()
 
         # 1. Subplot Atas: Evaluasi Train vs Test vs Predictions
-        train.plot(ax=self.ax1, label='train', color='#1f77b4', linewidth=1.5)
-        test.plot(ax=self.ax1, label='test', color='#2ca02c', linewidth=1.5)
-        val_predictions.plot(ax=self.ax1, label='predictions', color='#ff7f0e', linewidth=1.5)
+        train.plot(ax=self.ax1, label='Data Latih', color='#1f77b4', linewidth=1.5)
+        test.plot(ax=self.ax1, label='Data Uji', color='#2ca02c', linewidth=1.5)
+        val_predictions.plot(ax=self.ax1, label='Prediksi Validasi', color='#ff7f0e', linewidth=1.5)
         self.ax1.set_title(f"Evaluasi Peramalan ({ticker})", fontsize=10, pad=8, fontweight='bold', color='#1E293B')
-        self.ax1.set_xlabel("Date", fontsize=8)
-        self.ax1.set_ylabel("Price", fontsize=8)
+        self.ax1.set_xlabel("Tanggal", fontsize=8)
+        self.ax1.set_ylabel("Harga", fontsize=8)
         self.ax1.legend(loc='upper left', fontsize=8, framealpha=0.85)
         self.ax1.grid(True, linestyle='--', alpha=0.35)
 
         # 2. Subplot Bawah: Data Historis vs Hasil Prediksi Akhir
-        data.plot(ax=self.ax2, label='data', color='#1f77b4', linewidth=1.5)
-        final_predictions.plot(ax=self.ax2, label='predictions', color='#ff7f0e', linewidth=1.5)
+        data.plot(ax=self.ax2, label='Data Historis', color='#1f77b4', linewidth=1.5)
+        final_predictions.plot(ax=self.ax2, label='Prediksi Masa Depan', color='#ff7f0e', linewidth=1.5)
         self.ax2.set_title(f"Hasil Peramalan Akhir ({ticker})", fontsize=10, pad=8, fontweight='bold', color='#1E293B')
-        self.ax2.set_xlabel("Date", fontsize=8)
-        self.ax2.set_ylabel("Price", fontsize=8)
+        self.ax2.set_xlabel("Tanggal", fontsize=8)
+        self.ax2.set_ylabel("Harga", fontsize=8)
         self.ax2.legend(loc='upper left', fontsize=8, framealpha=0.85)
         self.ax2.grid(True, linestyle='--', alpha=0.35)
 
@@ -888,20 +888,20 @@ class YahooForecasterGUI(tk.Tk):
         # Create detached high-res matplotlib window
         pop_fig, (pax1, pax2) = plt.subplots(2, 1, figsize=(12, 8.5), facecolor='white')
 
-        b["train"].plot(ax=pax1, label='train', color='#1f77b4', linewidth=1.5)
-        b["test"].plot(ax=pax1, label='test', color='#2ca02c', linewidth=1.5)
-        b["val_predictions"].plot(ax=pax1, label='predictions', color='#ff7f0e', linewidth=1.5)
+        b["train"].plot(ax=pax1, label='Data Latih', color='#1f77b4', linewidth=1.5)
+        b["test"].plot(ax=pax1, label='Data Uji', color='#2ca02c', linewidth=1.5)
+        b["val_predictions"].plot(ax=pax1, label='Prediksi Validasi', color='#ff7f0e', linewidth=1.5)
         pax1.set_title(f"Evaluasi Peramalan ({b['ticker']})", fontsize=11, pad=8, fontweight='bold')
-        pax1.set_xlabel("Date", fontsize=9)
-        pax1.set_ylabel("Price", fontsize=9)
+        pax1.set_xlabel("Tanggal", fontsize=9)
+        pax1.set_ylabel("Harga", fontsize=9)
         pax1.legend(loc='upper left', fontsize=9)
         pax1.grid(True, linestyle='--', alpha=0.4)
 
-        b["data"].plot(ax=pax2, label='data', color='#1f77b4', linewidth=1.5)
-        b["final_predictions"].plot(ax=pax2, label='predictions', color='#ff7f0e', linewidth=1.5)
+        b["data"].plot(ax=pax2, label='Data Historis', color='#1f77b4', linewidth=1.5)
+        b["final_predictions"].plot(ax=pax2, label='Prediksi Masa Depan', color='#ff7f0e', linewidth=1.5)
         pax2.set_title(f"Hasil Peramalan Akhir ({b['ticker']})", fontsize=11, pad=8, fontweight='bold')
-        pax2.set_xlabel("Date", fontsize=9)
-        pax2.set_ylabel("Price", fontsize=9)
+        pax2.set_xlabel("Tanggal", fontsize=9)
+        pax2.set_ylabel("Harga", fontsize=9)
         pax2.legend(loc='upper left', fontsize=9)
         pax2.grid(True, linestyle='--', alpha=0.3)
 
@@ -909,7 +909,7 @@ class YahooForecasterGUI(tk.Tk):
 
         try:
             mngr = pop_fig.canvas.manager
-            mngr.set_window_title(f"Yahoo Finance Forecaster - {b['ticker']} (HD View)")
+            mngr.set_window_title(f"Yahoo Finance Forecaster - {b['ticker']} (Tampilan HD)")
             if hasattr(mngr, 'window'):
                 mngr.window.deiconify()
                 mngr.window.attributes('-topmost', True)
@@ -926,7 +926,7 @@ class YahooForecasterGUI(tk.Tk):
 
         b = self.last_results
         ticker = b["ticker"]
-        default_filename = f"forecast_{ticker}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+        default_filename = f"prediksi_{ticker}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
 
         filepath = filedialog.asksaveasfilename(
             defaultextension=".csv",

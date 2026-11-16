@@ -1,53 +1,53 @@
-# Contributing to Yahoo Finance Forecaster CLI
+# Panduan Kontribusi - Yahoo Finance Forecaster CLI
 
-Thank you for your interest in contributing to **Yahoo Finance Forecaster CLI**!
+Terima kasih atas ketertarikan Anda untuk berkontribusi pada **Yahoo Finance Forecaster CLI**!
 
-## 🛠️ Development Setup
+## 🛠️ Pengaturan Lingkungan Pengembangan (*Development Setup*)
 
-1. Fork and clone the repository:
+1. Fork dan kloning repositori:
    ```bash
-   git clone https://github.com/USERNAME/yahoo-finance-forecaster-cli.git
-   cd yahoo-finance-forecaster-cli
+   git clone https://github.com/Cahyo-Wisanggeni/Yahoo-Finance-Forecaster.git
+   cd Yahoo-Finance-Forecaster/"Yahoo Finance Forecaster CLI"
    ```
 
-2. Create and activate a virtual environment:
+2. Buat dan aktifkan virtual environment:
    ```bash
    python -m venv venv
-   # Windows:
+   # Pada Windows:
    venv\Scripts\activate
-   # Linux / macOS:
+   # Pada Linux / macOS:
    source venv/bin/activate
    ```
 
-3. Install required dependencies:
+3. Pasang semua dependensi yang dibutuhkan:
    ```bash
    pip install -r requirements.txt
    ```
 
-4. Test running the CLI:
+4. Uji coba menjalankan program CLI:
    ```bash
    python main.py
    ```
 
 ---
 
-## 📌 Coding Standards
+## 📌 Standar Kode
 
-- Follow **PEP 8** style guidelines.
-- Keep comments concise and informative (explain *why*, not obvious *what*).
-- Ensure error handling handles network failures or invalid ticker symbols gracefully.
-- Test with both IDX tickers (e.g. `BBCA.JK`) and global tickers (e.g. `AAPL`).
+- Ikuti pedoman gaya kode **PEP 8**.
+- Buat komentar kode yang ringkas, jelas, dan informatif (jelaskan *mengapa*, bukan sekadar *apa* yang sudah jelas dari kode).
+- Pastikan penanganan kesalahan (*error handling*) mampu menangani gangguan jaringan atau kode ticker tidak valid dengan baik tanpa membuat program *crash*.
+- Lakukan pengujian menggunakan ticker lokal BEI (misal: `BBCA.JK`) dan ticker bursa global (misal: `AAPL`).
 
 ---
 
-## 🚀 Pull Request Workflow
+## 🚀 Alur Kerja Pull Request
 
-1. Create a feature branch:
+1. Buat branch fitur baru:
    ```bash
-   git checkout -b feature/your-feature-name
+   git checkout -b fitur/nama-fitur-anda
    ```
-2. Commit your changes:
+2. Lakukan commit perubahan Anda:
    ```bash
-   git commit -m "feat: Add new forecasting metric"
+   git commit -m "feat: Menambahkan metrik evaluasi baru"
    ```
-3. Push to your branch and open a Pull Request with a clear description of changes.
+3. Push ke branch Anda dan buka Pull Request dengan deskripsi perubahan yang jelas dan terstruktur.

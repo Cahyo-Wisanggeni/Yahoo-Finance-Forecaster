@@ -2,10 +2,10 @@
 
 # 📈 Yahoo Finance Forecaster CLI
 
-### High-performance Machine Learning Time Series Forecasting directly from your terminal.
+### Peramalan Deret Waktu (*Time Series Forecasting*) Berbasis Machine Learning Langsung dari Terminal Anda.
 
 [![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/Lisensi-MIT-yellow.svg?style=flat-square)](LICENSE)
 [![Framework: skforecast](https://img.shields.io/badge/Framework-skforecast-0284C7?style=flat-square)](https://skforecast.org/)
 [![Estimator: RandomForest](https://img.shields.io/badge/Model-RandomForest_100_Trees-10B981?style=flat-square)](https://scikit-learn.org/)
 [![Data: Yahoo Finance](https://img.shields.io/badge/Data-Yahoo_Finance-7C3AED?style=flat-square)](https://finance.yahoo.com/)
@@ -15,27 +15,27 @@
 
 ---
 
-## 📖 Table of Contents
+## 📖 Daftar Isi
 
-- [Overview](#-overview)
-- [Key Features](#-key-features)
-- [Architecture & Workflow](#-architecture--workflow)
-- [Quick Start](#-quick-start)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-- [Usage Walkthrough](#-usage-walkthrough)
-- [Model Configuration](#-model-configuration)
-- [Project Structure](#-project-structure)
-- [Contributing](#-contributing)
-- [License](#-license)
+- [Ringkasan](#-ringkasan)
+- [Fitur Utama](#-fitur-utama)
+- [Arsitektur & Alur Kerja](#-arsitektur--alur-kerja)
+- [Panduan Memulai Cepat](#-panduan-memulai-cepat)
+  - [Prasyarat](#prasyarat)
+  - [Instalasi](#instalasi)
+- [Panduan Penggunaan](#-panduan-penggunaan)
+- [Konfigurasi Model](#-konfigurasi-model)
+- [Struktur Direktori](#-struktur-direktori)
+- [Kontribusi](#-kontribusi)
+- [Lisensi](#-lisensi)
 
 ---
 
-## 🌟 Overview
+## 🌟 Ringkasan
 
-**Yahoo Finance Forecaster CLI** is a terminal-based time series forecasting tool built for traders, quantitative analysts, and data science enthusiasts. It fetches real-time financial market data from Yahoo Finance and applies machine learning (**RandomForestRegressor** with **ForecasterDirect**) to predict future stock prices.
+**Yahoo Finance Forecaster CLI** adalah alat peramalan deret waktu berbasis terminal yang dirancang untuk trader, analis kuantitatif, dan praktisi data science. Alat ini mengambil data pasar keuangan secara *real-time* langsung dari Yahoo Finance dan menerapkan *machine learning* (**RandomForestRegressor** dengan strategi **ForecasterDirect**) untuk memproyeksikan harga aset di masa depan.
 
-```
+```text
   █ █ █▀█ █ █ █▀█ █▀█ █
    █  █▀█ █▀█ █ █ █ █ ▀
    ▀  ▀ ▀ ▀ ▀ ▀▀▀ ▀▀▀ ▀
@@ -46,79 +46,78 @@
 
 ---
 
-## ✨ Key Features
+## ✨ Fitur Utama
 
-- 🌐 **Global Ticker Support**: Works with all Yahoo Finance assets, including IDX stocks (`BBCA.JK`, `BBRI.JK`, `TLKM.JK`), US tech equities (`AAPL`, `NVDA`, `MSFT`), commodities, indices, and crypto.
-- ⚡ **Zero-Tuning Speed**: Configured with a proven architecture (10 Lags + 10 Rolling Means + 100 Trees) that trains in seconds with multi-core CPU acceleration (`n_jobs=-1`).
-- 🛡️ **Stationarity Transformation**: Automatic Order-1 first-differencing eliminates non-stationary trend bias.
-- 📊 **Dual-Panel HD Pop-up**:
-  1. **Top Panel**: Model Evaluation curve (*Train vs. Test vs. In-Sample Predictions*).
-  2. **Bottom Panel**: Future Projection curve (*Historical Series vs. Multi-Step Future Predictions*).
-- 📋 **Evaluation Metrics**: Prints Mean Absolute Error (MAE) and Mean Absolute Percentage Error (MAPE).
+- 🌐 **Mendukung Semua Ticker Global**: Bekerja mulus untuk seluruh aset Yahoo Finance, termasuk saham BEI/IDX Indonesia (`BBCA.JK`, `BBRI.JK`, `TLKM.JK`), saham teknologi global AS (`AAPL`, `NVDA`, `MSFT`), komoditas, indeks pasar, hingga mata uang kripto.
+- ⚡ **Cepat Tanpa Tuning Tambahan**: Menggunakan arsitektur optimal terverifikasi (10 Lags + 10 Rolling Means + 100 Trees) yang berlatih hanya dalam beberapa detik dengan akselerasi CPU multi-core (`n_jobs=-1`).
+- 🛡️ **Transformasi Stasioneritas Otomatis**: Diferensiasi tingkat pertama (Order-1 Differencing) untuk menghilangkan bias tren non-stasioner pada data harga mentah.
+- 📊 **Pop-up Grafik Resolusi Tinggi (HD)**:
+  1. **Grafik Atas**: Evaluasi Model (*Data Latih vs. Data Uji vs. Prediksi Validasi*).
+  2. **Grafik Bawah**: Proyeksi Masa Depan (*Data Historis Penuh vs. Proyeksi Multi-Langkah*).
+- 📋 **Metrik Evaluasi Komprehensif**: Menampilkan Mean Absolute Error (MAE) dan Mean Absolute Percentage Error (MAPE).
 
 ---
 
-## 🏗️ Architecture & Workflow
+## 🏗️ Arsitektur & Alur Kerja
 
 ```mermaid
 flowchart LR
-    A[Yahoo Finance API] --> B[Data Cleaning & AsFreq Resampling]
+    A[Yahoo Finance API] --> B[Pembersihan Data & Resampling AsFreq]
     B --> C[Feature Engineering: 10 Lags + 10 Rolling Means]
-    C --> D[Phase 1: Validation on Test Set 20%]
-    D --> E[Metrics: MAE & MAPE Calculation]
-    C --> F[Phase 2: Final Fit on 100% History]
-    F --> G[Out-of-Sample Multi-Step Forecast]
-    G --> H[Dual-Panel Matplotlib Visualization]
+    C --> D[Fase 1: Validasi pada Data Uji 20%]
+    D --> E[Perhitungan Metrik: MAE & MAPE]
+    C --> F[Fase 2: Pelatihan Final pada 100% Data Historis]
+    F --> G[Peramalan Multi-Langkah Out-of-Sample]
+    G --> H[Visualisasi Grafik Ganda Matplotlib]
 ```
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Panduan Memulai Cepat
 
-### Prerequisites
+### Prasyarat
 
-- **Python 3.9+** installed on your system.
-- An active internet connection for Yahoo Finance API requests.
+- **Python 3.9+** terpasang di sistem operasi Anda.
+- Koneksi internet aktif untuk mengunduh data dari Yahoo Finance.
 
-### Installation
+### Instalasi
 
 ```bash
-# 1. Clone repository
-git clone https://github.com/USERNAME/yahoo-finance-forecaster-cli.git
-cd yahoo-finance-forecaster-cli
+# 1. Masuk ke direktori CLI
+cd "Yahoo Finance Forecaster CLI"
 
-# 2. (Optional) Create virtual environment
+# 2. (Opsional) Buat virtual environment
 python -m venv venv
 
-# Windows
+# Mengaktifkan di Windows:
 venv\Scripts\activate
-# Linux / macOS
+# Mengaktifkan di Linux / macOS:
 source venv/bin/activate
 
-# 3. Install dependencies
+# 3. Instal pustaka yang dibutuhkan
 pip install -r requirements.txt
 ```
 
 ---
 
-## 💻 Usage Walkthrough
+## 💻 Panduan Penggunaan
 
-Launch the CLI tool:
+Jalankan program CLI melalui terminal:
 
 ```bash
 python main.py
 ```
 
-Follow the interactive prompts:
+Isi parameter interaktif yang diminta:
 
-1. **Kode Ticker**: Enter ticker symbol (e.g., `BBCA.JK` or `AAPL`). Automatically queries Yahoo Finance to display Company Name, Sector, and Industry.
-2. **Start Date & End Date**: Historical window in `YYYY-MM-DD` format (e.g., `2024-01-01` to `2026-11-16`).
-3. **Frekuensi Data**:
-   - `B` (*Business Days*): Excludes weekends, recommended for equity markets.
-   - `D` (*Calendar Days*): Continuous daily timeline.
-4. **Forecast Steps**: Number of future periods to predict (e.g., `30`).
+1. **Kode Ticker**: Masukkan simbol ticker (contoh: `BBCA.JK` atau `AAPL`). Program secara otomatis mengonfirmasi ke Yahoo Finance untuk menampilkan Nama Perusahaan, Sektor, dan Industri.
+2. **Tanggal Mulai & Tanggal Selesai**: Tentukan rentang data historis dengan format `YYYY-MM-DD` (contoh: `2024-01-01` s/d `2026-11-16`).
+3. **Jenis Frekuensi Data**:
+   - `B` (*Business Days*): Hanya hari bursa aktif (Senin–Jumat), sangat direkomendasikan untuk saham.
+   - `D` (*Calendar Days*): Seluruh hari kalender termasuk akhir pekan.
+4. **Jumlah Periode Prediksi (Steps)**: Masukkan jumlah periode hari ke depan yang ingin diproyeksikan (contoh: `30`).
 
-### Sample Terminal Output
+### Contoh Tampilan Terminal
 
 ```text
 ┌────────────────────────────────────────────────────────┐
@@ -126,10 +125,10 @@ Follow the interactive prompts:
 │  Nama           : PT Bank Central Asia Tbk             │
 │  Sektor         : Financial Services                   │
 │  Industri       : Banks - Regional                     │
-│  Start Date     : 2024-01-01                           │
-│  End Date       : 2026-11-16                           │
+│  Tanggal Mulai  : 2024-01-01                           │
+│  Tanggal Selesai: 2026-11-16                           │
 │  Frekuensi      : B (Business Days)                    │
-│  Forecast Steps : 30                                   │
+│  Periode (Steps): 30                                   │
 └────────────────────────────────────────────────────────┘
 
 [1/2] Melatih Model Peramalan...
@@ -153,39 +152,39 @@ No    | Tanggal         | Prediksi Harga
 
 ---
 
-## ⚙️ Model Configuration
+## ⚙️ Konfigurasi Model
 
-| Parameter | Value | Details |
+| Parameter | Nilai | Penjelasan Teknis |
 |---|---|---|
-| **Forecaster Strategy** | `ForecasterDirect` | Trains dedicated estimators for each forward step |
-| **Estimator** | `RandomForestRegressor` | 100 decision trees, `n_jobs=-1`, `random_state=42` |
-| **Autoregressive Lags** | `10` | Lags $t-1$ through $t-10$ |
-| **Rolling Features** | `10` | Rolling mean windows 1 through 10 |
-| **Total Features** | `20` | 10 Lags + 10 Rolling Means |
-| **Differentiation** | `Order 1` | First-difference transform for stationarity |
+| **Strategi Peramalan** | `ForecasterDirect` | Melatih estimator khusus untuk tiap horizon langkah prediksi |
+| **Estimator Utama** | `RandomForestRegressor` | 100 pohon keputusan (*decision trees*), `n_jobs=-1`, `random_state=42` |
+| **Fitur Autoregresif** | `10` | Lag $t-1$ hingga $t-10$ |
+| **Fitur Rolling Window** | `10` | Jendela perata-rataan bergerak 1 hingga 10 |
+| **Total Fitur Prediktor** | `20` | 10 Lags + 10 Rolling Means |
+| **Diferensiasi** | `Ordo 1` | Menjaga kestasioneran data deret waktu |
 
 ---
 
-## 📁 Project Structure
+## 📁 Struktur Direktori
 
 ```text
 .
-├── .gitignore          # Git exclusion rules
-├── CONTRIBUTING.md     # Guidelines for contributors
-├── LICENSE             # MIT License
-├── README.md           # Project documentation
-├── requirements.txt    # Production dependencies
-└── main.py             # CLI application entrypoint
+├── .gitignore          # Aturan pengabaian file Git
+├── CONTRIBUTING.md     # Panduan kontribusi proyek
+├── LICENSE             # Salinan Lisensi MIT
+├── README.md           # Dokumentasi edisi CLI
+├── requirements.txt    # Daftar dependensi Python
+└── main.py             # Titik masuk utama aplikasi CLI
 ```
 
 ---
 
-## 🤝 Contributing
+## 🤝 Kontribusi
 
-Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on submitting pull requests, reporting bugs, or suggesting feature improvements.
+Kontribusi selalu terbuka dan diapresiasi! Silakan baca [CONTRIBUTING.md](CONTRIBUTING.md) untuk panduan pembuatan pull request, pelaporan bug, atau saran pengembangan fitur.
 
 ---
 
-## 📜 License
+## 📜 Lisensi
 
-Distributed under the **MIT License**. See [LICENSE](LICENSE) for full legal text.
+Didistribusikan di bawah **MIT License**. Lihat [LICENSE](LICENSE) untuk teks hukum lengkap.
