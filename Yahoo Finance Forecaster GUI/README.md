@@ -4,6 +4,7 @@
 
 ### Aplikasi Desktop Modern untuk Peramalan Deret Waktu (*Time Series Forecasting*) Harga Saham Berbasis Machine Learning.
 
+[![Release](https://img.shields.io/badge/Release-v1.0.0-blue?style=flat-square)](https://github.com/Cahyo-Wisanggeni/Yahoo-Finance-Forecaster/releases)
 [![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![UI: Tkinter](https://img.shields.io/badge/UI-Tkinter_%2F_TTK-FFD43B?style=flat-square&logo=python&logoColor=3776AB)](https://docs.python.org/3/library/tkinter.html)
 [![License: MIT](https://img.shields.io/badge/Lisensi-MIT-yellow.svg?style=flat-square)](LICENSE)
@@ -136,6 +137,9 @@ pip install -r requirements.txt
 #### Melalui Terminal (Semua Sistem Operasi):
 ```bash
 python app.py
+
+# Memeriksa versi yang terpasang:
+python app.py --version
 ```
 
 ---

@@ -27,6 +27,12 @@ if sys.platform == 'win32':
 warnings.filterwarnings('ignore')
 os.environ['PYTHONWARNINGS'] = 'ignore'
 
+__version__ = "1.0.0"
+
+if len(sys.argv) > 1 and sys.argv[1] in ("-v", "--version"):
+    print(f"Yahoo Finance Forecaster CLI v{__version__}")
+    sys.exit(0)
+
 import pandas as pd
 import yfinance as yf
 import matplotlib.pyplot as plt
@@ -116,6 +122,7 @@ def print_header_logo():
     """
     purple = "\033[38;2;168;85;247m"   # Ungu terang khas Yahoo (solid fill)
     cyan   = "\033[38;2;34;211;238m"   # Cyan terang (solid fill)
+    dim    = "\033[38;2;148;163;184m"  # Slate / Abu-abu terang
     reset  = "\033[0m"
 
     lines = [
@@ -124,12 +131,17 @@ def print_header_logo():
         f"{purple}   ▀  ▀ ▀ ▀ ▀ ▀▀▀ ▀▀▀ ▀{reset}",
         f"{purple}  █▀▀ █ █▀▄ █▀█ █▀▄ █▀▀ █▀▀{reset}    {cyan}█▀▀ █▀█ █▀▄ █▀▀ █▀▀ █▀█ █▀▀ ▀█▀ █▀▀ █▀▄{reset}",
         f"{purple}  █▀  █ █ █ █▀█ █ █ █   █▀ {reset}    {cyan}█▀  █ █ █▀▄ █▀  █   █▀█ ▀▀█  █  █▀  █▀▄{reset}",
-        f"{purple}  ▀   ▀ ▀ ▀ ▀ ▀ ▀ ▀ ▀▀▀ ▀▀▀{reset}    {cyan}▀   ▀▀▀ ▀ ▀ ▀▀▀ ▀▀▀ ▀ ▀ ▀▀▀  ▀  ▀▀▀ ▀ ▀{reset}"
+        f"{purple}  ▀   ▀ ▀ ▀ ▀ ▀ ▀ ▀ ▀▀▀ ▀▀▀{reset}    {cyan}▀   ▀▀▀ ▀ ▀ ▀▀▀ ▀▀▀ ▀ ▀ ▀▀▀  ▀  ▀▀▀ ▀ ▀{reset}",
+        f"  {dim}Edisi CLI v{__version__} - Time Series Machine Learning Platform{reset}"
     ]
     print("\n" + "\n".join(lines))
 
 
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] in ("-v", "--version"):
+        print(f"Yahoo Finance Forecaster CLI v{__version__}")
+        sys.exit(0)
+
     print_header_logo()
 
     # ---------------------------------------------------------

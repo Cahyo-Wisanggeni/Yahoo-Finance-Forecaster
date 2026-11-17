@@ -6,6 +6,13 @@ RandomForestRegressor, dan ForecasterDirect (10 Lags, 10 Rolling Means, 100 Tree
 
 import os
 import sys
+
+__version__ = "1.0.0"
+
+if len(sys.argv) > 1 and sys.argv[1] in ("-v", "--version"):
+    print(f"Yahoo Finance Forecaster GUI v{__version__}")
+    sys.exit(0)
+
 import threading
 import warnings
 from datetime import datetime, timedelta
@@ -36,7 +43,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 class YahooForecasterGUI(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Yahoo Finance Forecaster - GUI Edition")
+        self.title(f"Yahoo Finance Forecaster - GUI Edition v{__version__}")
         self.geometry("1280x820")
         self.minsize(1050, 700)
         
@@ -146,7 +153,7 @@ class YahooForecasterGUI(tk.Tk):
 
         badge_frame = tk.Frame(header_frame, bg=self.colors["primary"])
         badge_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=22, pady=22)
-        lbl_version = tk.Label(badge_frame, text="EDISI GUI v1.0", bg=self.colors["primary_dark"], fg="#A7F3D0", font=("Segoe UI", 8, "bold"), padx=10, pady=4)
+        lbl_version = tk.Label(badge_frame, text=f"EDISI GUI v{__version__}", bg=self.colors["primary_dark"], fg="#A7F3D0", font=("Segoe UI", 8, "bold"), padx=10, pady=4)
         lbl_version.pack()
 
         # ----------------------------------------------------

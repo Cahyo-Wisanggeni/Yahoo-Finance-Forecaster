@@ -4,6 +4,7 @@
 
 ### Platform Peramalan Deret Waktu (*Time Series*) Pasar Keuangan Berbasis Machine Learning — Tersedia dalam Edisi Terminal CLI & Desktop GUI.
 
+[![Release](https://img.shields.io/badge/Release-v1.0.0-blue?style=flat-square)](https://github.com/Cahyo-Wisanggeni/Yahoo-Finance-Forecaster/releases)
 [![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/Lisensi-MIT-yellow.svg?style=flat-square)](LICENSE)
 [![Tkinter](https://img.shields.io/badge/Tkinter-3776AB?style=flat-square&logo=python&logoColor=white)](https://docs.python.org/3/library/tkinter.html)
@@ -23,6 +24,7 @@
 - [Arsitektur Machine Learning](#arsitektur-machine-learning)
 - [Panduan Memulai Cepat](#panduan-memulai-cepat)
 - [Struktur Repositori](#struktur-repositori)
+- [Catatan Perubahan](#catatan-perubahan)
 - [Lisensi](#lisensi)
 
 ---
@@ -121,6 +123,7 @@ python app.py
 ```text
 Yahoo-Finance-Forecaster/
 ├── .gitignore                          # Aturan abaikan Git global
+├── CHANGELOG.md                        # Catatan perubahan dan riwayat versi
 ├── LICENSE                             # Lisensi MIT
 ├── README.md                           # Dokumentasi utama proyek
 │
@@ -142,6 +145,12 @@ Yahoo-Finance-Forecaster/
     ├── run_gui_debug.bat
     └── app.py
 ```
+
+---
+
+## Catatan Perubahan
+
+Riwayat pembaruan versi dan penambahan fitur didokumentasikan secara rinci pada [CHANGELOG.md](CHANGELOG.md).
 
 ---
 

@@ -4,6 +4,7 @@
 
 ### Peramalan Deret Waktu (*Time Series Forecasting*) Berbasis Machine Learning Langsung dari Terminal Anda.
 
+[![Release](https://img.shields.io/badge/Release-v1.0.0-blue?style=flat-square)](https://github.com/Cahyo-Wisanggeni/Yahoo-Finance-Forecaster/releases)
 [![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/Lisensi-MIT-yellow.svg?style=flat-square)](LICENSE)
 [![Framework: skforecast](https://img.shields.io/badge/Framework-skforecast-0284C7?style=flat-square)](https://skforecast.org/)
@@ -105,6 +106,11 @@ Jalankan program CLI melalui terminal:
 
 ```bash
 python main.py
+```
+
+Untuk memeriksa versi yang terpasang:
+```bash
+python main.py --version
 ```
 
 Isi parameter interaktif yang diminta:
