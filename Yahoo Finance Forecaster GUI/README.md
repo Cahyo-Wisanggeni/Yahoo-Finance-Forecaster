@@ -1,6 +1,6 @@
 <div align="center">
 
-# Yahoo Finance Forecaster - GUI Edition
+<img src="assets/logo_v2.png" alt="Yahoo! Finance Forecaster Logo" width="600"/>
 
 ### Aplikasi Desktop Modern untuk Peramalan Deret Waktu (*Time Series Forecasting*) Harga Saham Berbasis Machine Learning.
 
@@ -19,6 +19,7 @@
 ## Daftar Isi
 
 - [Ringkasan](#ringkasan)
+- [Pratinjau Aplikasi](#pratinjau-aplikasi)
 - [Fitur Utama](#fitur-utama)
 - [Rincian Tab Aplikasi](#rincian-tab-aplikasi)
 - [Arsitektur & Multi-Threading](#arsitektur--multi-threading)
@@ -38,6 +39,12 @@
 **Yahoo Finance Forecaster GUI** menyajikan antarmuka grafis desktop modern yang elegan dan responsif untuk memproyeksikan harga saham, indeks pasar, komoditas, dan aset kripto menggunakan data langsung dari Yahoo Finance.
 
 Ditenagai oleh **Random Forest Regressor** (100 pohon keputusan) dan framework **skforecast** (`ForecasterDirect`), aplikasi ini menggabungkan variabel lag autoregresif ($t-1 \dots t-10$) dengan rata-rata bergerak (*rolling window averages* $1 \dots 10$) serta diferensiasi ordo pertama untuk menghasilkan proyeksi harga multi-langkah ke depan yang akurat dan stabil.
+
+## Pratinjau Aplikasi
+
+<div align="center">
+  <img src="assets/gui_preview_v2.png" alt="Pratinjau Antarmuka GUI Yahoo Finance Forecaster" width="900"/>
+</div>
 
 ---
 
@@ -62,17 +69,17 @@ Aplikasi mengorganisasi seluruh hasil analisis ke dalam empat tab khusus:
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
-1. ** Grafik Prediksi**:
+1. **Grafik Prediksi**:
    - Kanvas Matplotlib terintegrasi dengan dua grafik tersinkronisasi:
      - **Grafik Atas**: Evaluasi Model (*Data Latih vs. Data Uji vs. Prediksi Validasi*).
      - **Grafik Bawah**: Proyeksi Masa Depan (*Data Historis Penuh vs. Proyeksi Multi-Langkah*).
-   - Dilengkapi toolbar interaktif Matplotlib (Pan, Zoom, Konfigurasi Subplot, Simpan Gambar) dan tombol ** Tampilkan Jendela Pop-up HD** untuk inspeksi detail resolusi tinggi.
-2. ** Tabel Rincian Prediksi**:
+   - Dilengkapi toolbar interaktif Matplotlib (Pan, Zoom, Konfigurasi Subplot, Simpan Gambar) dan tombol **Tampilkan Jendela Pop-up HD** untuk inspeksi detail resolusi tinggi.
+2. **Tabel Rincian Prediksi**:
    - Tabel terstruktur berisi nomor urut, tanggal proyeksi, estimasi harga prediksi, nominal selisih harga, dan persentase perubahan terhadap harga penutupan terakhir.
-   - Dilengkapi tombol ** Ekspor Hasil ke CSV**.
-3. ** Log Komputasi**:
+   - Dilengkapi tombol **Ekspor Hasil ke CSV**.
+3. **Log Komputasi**:
    - Aliran log terminal *real-time* dengan penanda waktu (*timestamp*) akurat yang merinci proses download data, pemisahan sampel, dan metrik evaluasi model (MAE & MAPE).
-4. ** Tutorial**:
+4. **Tutorial**:
    - Panduan komprehensif bawaan yang menjelaskan langkah-langkah penggunaan aplikasi dari awal hingga akhir.
 
 ---

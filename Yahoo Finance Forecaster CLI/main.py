@@ -5,14 +5,13 @@ import contextlib
 import re
 import warnings
 
-# Konfigurasi encoding stdout dan aktifkan ANSI Virtual Terminal di Windows
 if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
     try:
         sys.stdout.reconfigure(encoding='utf-8')
     except Exception:
         pass
 
-os.system('')  # Mengaktifkan interpretasi escape code ANSI di CMD Windows
+os.system('')
 if sys.platform == 'win32':
     try:
         import ctypes
@@ -44,10 +43,6 @@ from skforecast.preprocessing import RollingFeatures
 
 
 def parse_date_input(prompt_text):
-    """
-    Meminta input tanggal dengan format YYYY-MM-DD secara manual tanpa default.
-    Mendukung format 2-digit tahun (YY-MM-DD) yang otomatis dikonversi ke YYYY-MM-DD.
-    """
     while True:
         prompt = f"{prompt_text} : " if not prompt_text.endswith(":") else f"{prompt_text} "
         raw_val = input(prompt).strip()
@@ -55,13 +50,11 @@ def parse_date_input(prompt_text):
             print("[!] Tanggal tidak boleh kosong.")
             continue
 
-        # Cocokkan format YYYY-MM-DD (misal: 2025-01-01)
         match_long = re.match(r"^(\d{4})-(\d{1,2})-(\d{1,2})$", raw_val)
         if match_long:
             yyyy, mm, dd = match_long.groups()
             return f"{yyyy}-{int(mm):02d}-{int(dd):02d}"
 
-        # Fallback fleksibel jika format YY-MM-DD (misal: 25-01-01)
         match_short = re.match(r"^(\d{2})-(\d{1,2})-(\d{1,2})$", raw_val)
         if match_short:
             yy, mm, dd = match_short.groups()
@@ -71,15 +64,8 @@ def parse_date_input(prompt_text):
 
 
 def plot_combined_results_popup(train, test, val_predictions, data, final_predictions, ticker, steps):
-    """
-    Menampilkan satu jendela pop-up Matplotlib beresolusi tinggi (HD)
-    yang memuat 2 grafik sekaligus dalam satu tampilan (vertikal bersusun):
-    1. Grafik 1 (Atas) : Evaluasi Model (Train vs Test vs Predictions)
-    2. Grafik 2 (Bawah): Hasil Peramalan Akhir (Data Historis vs Prediksi)
-    """
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8.5), facecolor='white')
 
-    # 1. Subplot Atas: Evaluasi Train vs Test vs Predictions
     train.plot(ax=ax1, label='Data Latih', color='#1f77b4', linewidth=1.5)
     test.plot(ax=ax1, label='Data Uji', color='#2ca02c', linewidth=1.5)
     val_predictions.plot(ax=ax1, label='Prediksi', color='#ff7f0e', linewidth=1.5)
@@ -89,7 +75,6 @@ def plot_combined_results_popup(train, test, val_predictions, data, final_predic
     ax1.legend(loc='upper left', fontsize=9)
     ax1.grid(True, linestyle='--', alpha=0.4)
 
-    # 2. Subplot Bawah: Data Historis vs Hasil Prediksi Akhir
     data.plot(ax=ax2, label='Data Historis', color='#1f77b4', linewidth=1.5)
     final_predictions.plot(ax=ax2, label='Prediksi', color='#ff7f0e', linewidth=1.5)
     ax2.set_title(f"Hasil Peramalan Akhir ({ticker})", fontsize=11, pad=8, fontweight='bold')
@@ -98,10 +83,8 @@ def plot_combined_results_popup(train, test, val_predictions, data, final_predic
     ax2.legend(loc='upper left', fontsize=9)
     ax2.grid(True, linestyle='--', alpha=0.3)
 
-    # Berikan jarak antar grafik agar label Date dan judul grafik bawah tidak mepet/tumpang tindih
     plt.tight_layout(h_pad=3.5)
 
-    # Memaksa jendela pop-up Matplotlib agar langsung muncul di depan layar (Topmost)
     try:
         mngr = fig.canvas.manager
         mngr.set_window_title(f"Yahoo Finance Forecaster - {ticker}")
@@ -116,13 +99,9 @@ def plot_combined_results_popup(train, test, val_predictions, data, final_predic
 
 
 def print_header_logo():
-    """
-    Menampilkan logo Yahoo! Finance dan FORECASTER dalam bentuk Solid Block Font
-    yang terisi warna, dengan huruf C dan E yang jelas berbeda.
-    """
-    purple = "\033[38;2;168;85;247m"   # Ungu terang khas Yahoo (solid fill)
-    cyan   = "\033[38;2;34;211;238m"   # Cyan terang (solid fill)
-    dim    = "\033[38;2;148;163;184m"  # Slate / Abu-abu terang
+    purple = "\033[38;2;168;85;247m"
+    cyan   = "\033[38;2;34;211;238m"
+    dim    = "\033[38;2;148;163;184m"
     reset  = "\033[0m"
 
     lines = [
@@ -144,12 +123,8 @@ def main():
 
     print_header_logo()
 
-    # ---------------------------------------------------------
-    # 1. KONFIGURASI
-    # ---------------------------------------------------------
     print("\n[1] KONFIGURASI")
 
-    # Input Ticker
     while True:
         raw_ticker = input("Kode ticker (contoh: BBCA.JK): ").strip()
         ticker = raw_ticker.replace('ticker', '').replace('=', '').replace('"', '').replace("'", '').strip().upper()
@@ -157,7 +132,6 @@ def main():
             print("[!] Kode ticker tidak boleh kosong.")
             continue
 
-        # Validasi langsung cek nama perusahaan (jika None maka tidak valid)
         try:
             with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
                 ticker_obj = yf.Ticker(ticker)
@@ -172,12 +146,10 @@ def main():
 
         break
 
-    # Input Tanggal Mulai & Tanggal Selesai
     print()
     start_date = parse_date_input("Tanggal Mulai (YYYY-MM-DD)")
     end_date = parse_date_input("Tanggal Selesai (YYYY-MM-DD)")
 
-    # Input Frekuensi
     while True:
         freq_in = input("\nJenis Frekuensi Data [B (Business Days) / D (Days)]: ").strip().upper()
         if freq_in in ["B", "D"]:
@@ -185,7 +157,6 @@ def main():
             break
         print("[!] Frekuensi wajib diisi 'B' atau 'D'.")
 
-    # Input steps
     while True:
         steps_in = input("\nJumlah Periode Prediksi (Steps): ").strip()
         if not steps_in:
@@ -199,9 +170,6 @@ def main():
         except ValueError:
             print("[!] Jumlah periode prediksi harus berupa angka bulat (integer).")
 
-    # ---------------------------------------------------------
-    # 2. PROSES KOMPUTASI
-    # ---------------------------------------------------------
     print("\n[2] PROSES KOMPUTASI & INFORMASI PERUSAHAAN")
 
     try:
@@ -243,7 +211,6 @@ def main():
         print(f"[!] Tidak ada data yang ditemukan untuk ticker '{ticker}' pada rentang waktu {start_date} s/d {end_date}.")
         sys.exit(1)
 
-    # Ambil harga penutupan (Close)
     if isinstance(df_raw.columns, pd.MultiIndex):
         try:
             close_data = df_raw['Close'][ticker]
@@ -253,19 +220,16 @@ def main():
         close_data = df_raw['Close']
 
     close_data = close_data.squeeze()
-    # Atur frekuensi waktu (B atau D)
     data = close_data.asfreq(freq).ffill().bfill()
 
     if len(data) < 30:
         print("[!] Data terlalu sedikit untuk melatih model time series. Harap perlebar rentang tanggal.")
         sys.exit(1)
 
-    # Split Train & Test (sekitar 20% untuk test)
     val_steps = max(1, round(0.2 * len(data)))
     train = data[:-val_steps]
     test = data[-val_steps:]
 
-    # Konfigurasi Model Tetap (10 Lags, 10 Rolling Means, 100 Trees - Tanpa Tuning)
     lags = 10
     n_estimators = 100
     rolling_features = RollingFeatures(
@@ -274,7 +238,6 @@ def main():
     )
 
 
-    # 1. Evaluasi Model pada Data Test
     print("\n[1/2] Melatih Model Peramalan...")
     forecaster_val = ForecasterDirect(
         estimator=RandomForestRegressor(n_estimators=n_estimators, random_state=42, n_jobs=-1),
@@ -308,7 +271,6 @@ def main():
         box_bot = f"+{'-' * w}+"
         print(f"\n{box_top}\n{box_title}\n{box_mae}\n{box_mape}\n{box_bot}")
 
-    # 2. Prediksi Akhir Masa Depan pada Seluruh Data
     print("\n[2/2] Melakukan Peramalan...")
     forecaster_final = ForecasterDirect(
         estimator=RandomForestRegressor(n_estimators=n_estimators, random_state=42, n_jobs=-1),
@@ -320,7 +282,6 @@ def main():
     forecaster_final.fit(y=data)
     final_predictions = forecaster_final.predict(steps=steps)
 
-    # Menampilkan tabel nilai prediksi akhir (5 teratas & 5 terbawah jika data > 10)
     print("\nRincian Nilai Hasil Peramalan :")
     print("-" * 45)
     print(f"{'No':<5} | {'Tanggal':<15} | {'Prediksi Harga':<15}")
@@ -341,7 +302,6 @@ def main():
             print(f"{idx:<5} | {dt_str:<15} | {val:,.2f}")
     print("-" * 45 + "\n")
 
-    # E. Menampilkan 1 jendela pop-up grafik gabungan (2 grafik di dalamnya)
     plot_combined_results_popup(train, test, val_predictions, data, final_predictions, ticker, steps)
 
 
