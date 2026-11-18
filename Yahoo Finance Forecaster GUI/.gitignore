@@ -46,3 +46,4 @@ Desktop.ini
 # User generated outputs & logs
 *.log
 forecast_results_*.csv
+forecast_history.json

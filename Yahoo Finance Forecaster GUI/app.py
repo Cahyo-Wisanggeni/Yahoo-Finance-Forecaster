@@ -7,9 +7,11 @@ if len(sys.argv) > 1 and sys.argv[1] in ("-v", "--version"):
     print(f"Yahoo Finance Forecaster GUI v{__version__}")
     sys.exit(0)
 
+import json
 import threading
 import warnings
 from datetime import datetime, timedelta
+import numpy as np
 import pandas as pd
 
 warnings.filterwarnings('ignore')
@@ -19,8 +21,14 @@ import yfinance as yf
 
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error
+from sklearn.model_selection import TimeSeriesSplit, learning_curve
 from skforecast.direct import ForecasterDirect
 from skforecast.preprocessing import RollingFeatures
+
+try:
+    import shap
+except ImportError:
+    shap = None
 
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
@@ -57,6 +65,8 @@ class YahooForecasterGUI(tk.Tk):
         self.configure(bg=self.colors["bg"])
         self.is_running = False
         self.last_results = None
+        self.history_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "forecast_history.json")
+        self.history_items = []
 
         self._configure_styles()
         self._build_ui()
@@ -94,6 +104,9 @@ class YahooForecasterGUI(tk.Tk):
             background=[("active", "#E2E8F0"), ("disabled", "#F8FAFC")],
             foreground=[("disabled", "#94A3B8")]
         )
+
+        self.style.configure("Settings.TCheckbutton", background="#F8FAFC", foreground=self.colors["text"], font=("Segoe UI", 9))
+        self.style.map("Settings.TCheckbutton", background=[("active", "#F8FAFC")])
 
         self.style.configure("TNotebook", background=self.colors["bg"], tabmargins=[2, 5, 2, 0])
         self.style.configure("TNotebook.Tab", background="#E2E8F0", foreground="#475569", padding=[15, 6], font=("Segoe UI", 9, "bold"))
@@ -196,7 +209,7 @@ class YahooForecasterGUI(tk.Tk):
         dates_grid.columnconfigure(1, weight=1)
 
         params_grid = tk.Frame(cfg_inner, bg=self.colors["card_bg"])
-        params_grid.pack(fill=tk.X, pady=(4, 8))
+        params_grid.pack(fill=tk.X, pady=(4, 6))
 
         lbl_freq = tk.Label(params_grid, text="Jenis Frekuensi Data:", bg=self.colors["card_bg"], font=("Segoe UI", 8), fg=self.colors["text_muted"])
         lbl_freq.grid(row=0, column=0, sticky="w", padx=(0, 4))
@@ -213,8 +226,35 @@ class YahooForecasterGUI(tk.Tk):
         params_grid.columnconfigure(0, weight=1)
         params_grid.columnconfigure(1, weight=1)
 
+        settings_box = tk.Frame(cfg_inner, bg="#F8FAFC", bd=1, relief="solid")
+        settings_box.pack(fill=tk.X, pady=(2, 6))
+
+        settings_inner = tk.Frame(settings_box, bg="#F8FAFC")
+        settings_inner.pack(fill=tk.X, padx=10, pady=(5, 7))
+
+        lbl_settings = tk.Label(
+            settings_inner,
+            text="⚙️ Pengaturan",
+            bg="#F8FAFC",
+            fg=self.colors["primary_dark"],
+            font=("Segoe UI", 9, "bold")
+        )
+        lbl_settings.pack(anchor="w", pady=(0, 3))
+
+        chk_row = tk.Frame(settings_inner, bg="#F8FAFC")
+        chk_row.pack(fill=tk.X)
+
+        self.var_use_shap = tk.BooleanVar(self, value=False)
+        self.var_use_lc = tk.BooleanVar(self, value=False)
+
+        self.chk_shap = ttk.Checkbutton(chk_row, text="SHAP analysis", variable=self.var_use_shap, style="Settings.TCheckbutton")
+        self.chk_shap.pack(side=tk.LEFT, padx=(0, 14))
+
+        self.chk_lc = ttk.Checkbutton(chk_row, text="Learning Curve", variable=self.var_use_lc, style="Settings.TCheckbutton")
+        self.chk_lc.pack(side=tk.LEFT)
+
         self.btn_run = ttk.Button(cfg_inner, text="🚀 MULAI PERAMALAN", style="Primary.TButton", command=self._action_start_forecast)
-        self.btn_run.pack(fill=tk.X, pady=(10, 4))
+        self.btn_run.pack(fill=tk.X, pady=(4, 4))
 
         self.pbar = ttk.Progressbar(cfg_inner, style="Horizontal.TProgressbar", mode="determinate")
         self.pbar.pack(fill=tk.X, pady=(6, 2))
@@ -286,15 +326,23 @@ class YahooForecasterGUI(tk.Tk):
         self.tab_table = ttk.Frame(self.notebook)
         self.notebook.add(self.tab_table, text=" 📋 Tabel Rincian Prediksi ")
 
+        self.tab_var_analysis = ttk.Frame(self.notebook)
+        self.notebook.add(self.tab_var_analysis, text=" 🔬 Analisis Variabel ")
+
         self.tab_log = ttk.Frame(self.notebook)
         self.notebook.add(self.tab_log, text=" 📝 Log Komputasi ")
+
+        self.tab_history = ttk.Frame(self.notebook)
+        self.notebook.add(self.tab_history, text=" 🕒 Riwayat ")
 
         self.tab_tutorial = ttk.Frame(self.notebook)
         self.notebook.add(self.tab_tutorial, text=" 📖 Tutorial ")
 
         self._setup_chart_tab()
         self._setup_table_tab()
+        self._setup_var_analysis_tab()
         self._setup_log_tab()
+        self._setup_history_tab()
         self._setup_tutorial_tab()
 
     def _setup_chart_tab(self):
@@ -378,6 +426,239 @@ class YahooForecasterGUI(tk.Tk):
         table_container.rowconfigure(0, weight=1)
         table_container.columnconfigure(0, weight=1)
 
+    def _setup_var_analysis_tab(self):
+        var_top_bar = tk.Frame(self.tab_var_analysis, bg=self.colors["bg"])
+        var_top_bar.pack(side=tk.TOP, fill=tk.X, pady=(6, 4), padx=6)
+
+        title_wrap = tk.Frame(var_top_bar, bg=self.colors["bg"])
+        title_wrap.pack(side=tk.LEFT, pady=2)
+
+        lbl_var_title = tk.Label(
+            title_wrap,
+            text="🔬 Analisis Variabel (SHAP & Learning Curve)",
+            bg=self.colors["bg"],
+            font=("Segoe UI", 9, "bold"),
+            fg=self.colors["primary_dark"]
+        )
+        lbl_var_title.pack(side=tk.LEFT)
+
+        self.lbl_var_status = tk.Label(
+            title_wrap,
+            text="• Belum ada analisis aktif",
+            bg=self.colors["bg"],
+            font=("Segoe UI", 8),
+            fg=self.colors["text_muted"]
+        )
+        self.lbl_var_status.pack(side=tk.LEFT, padx=(8, 0))
+
+        btn_popup_var = ttk.Button(
+            var_top_bar,
+            text="🖥️ Tampilkan Jendela Pop-up HD",
+            style="Accent.TButton",
+            command=self._action_popup_var_chart
+        )
+        btn_popup_var.pack(side=tk.RIGHT, padx=4)
+
+        self.var_fig = plt.figure(figsize=(9.5, 6.5), facecolor="white")
+        self._init_empty_var_chart(self.var_fig)
+
+        self.var_canvas_frame = tk.Frame(self.tab_var_analysis, bg="#FFFFFF", bd=1, relief="solid")
+        self.var_canvas_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=6, pady=(0, 6))
+
+        self.var_canvas = FigureCanvasTkAgg(self.var_fig, master=self.var_canvas_frame)
+        self.var_canvas.draw()
+
+        self.var_toolbar_frame = tk.Frame(self.tab_var_analysis, bg="#F1F5F9")
+        self.var_toolbar_frame.pack(side=tk.BOTTOM, fill=tk.X, padx=6, pady=(0, 4))
+        self.var_toolbar = NavigationToolbar2Tk(self.var_canvas, self.var_toolbar_frame)
+        self.var_toolbar.update()
+
+        self.var_canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+    def _init_empty_var_chart(self, fig=None):
+        target_fig = fig if fig is not None else self.var_fig
+        target_fig.clear()
+        ax = target_fig.add_subplot(1, 1, 1)
+        ax.axis("off")
+        ax.text(
+            0.5,
+            0.52,
+            "Tidak ada analisis variabel yang ditampilkan.\n\n"
+            "Centang 'SHAP analysis' dan/atau 'Learning Curve' pada kotak Pengaturan\n"
+            "di sebelah kiri, lalu jalankan 'MULAI PERAMALAN'.",
+            horizontalalignment="center",
+            verticalalignment="center",
+            transform=ax.transAxes,
+            color="#94A3B8",
+            fontsize=10.5,
+            style="italic",
+            linespacing=1.5
+        )
+        if hasattr(self, "lbl_var_status") and target_fig is self.var_fig:
+            self.lbl_var_status.config(text="• Tidak ada analisis aktif")
+
+    def _plot_shap_panels(self, ax_bar, ax_bee, shap_data, ticker, fig):
+        from matplotlib.colors import Normalize
+        from matplotlib.cm import ScalarMappable
+        from matplotlib.patches import Patch
+
+        feature_names = shap_data["feature_names"]
+        shap_values = np.asarray(shap_data["shap_values"], dtype=float)
+        feature_values = np.asarray(shap_data["feature_values"], dtype=float)
+
+        mean_abs = np.abs(shap_values).mean(axis=0)
+        top_k = min(15, len(feature_names))
+        order = np.argsort(mean_abs)[-top_k:]
+
+        top_names = [feature_names[i] for i in order]
+        top_vals = mean_abs[order]
+        bar_colors = [
+            "#6B21A8" if name.startswith("lag_") else ("#06B6D4" if name.startswith("roll_mean_") else "#64748B")
+            for name in top_names
+        ]
+
+        y_pos = np.arange(len(order))
+        ax_bar.barh(y_pos, top_vals, color=bar_colors, height=0.68, alpha=0.9)
+        ax_bar.set_yticks(y_pos)
+        ax_bar.set_yticklabels(top_names, fontsize=8)
+        ax_bar.set_xlabel("Mean |SHAP Value|", fontsize=8.5)
+        ax_bar.set_title(f"SHAP Feature Importance (Top {top_k} - {ticker})", fontsize=9.5, fontweight="bold", pad=8, color="#1E293B")
+        ax_bar.grid(True, axis="x", linestyle="--", alpha=0.35)
+
+        max_bar = float(top_vals.max()) if len(top_vals) else 1.0
+        ax_bar.set_xlim(0, max_bar * 1.18 if max_bar > 0 else 1.0)
+        for y_i, val in enumerate(top_vals):
+            ax_bar.text(val + max_bar * 0.015, y_i, f"{val:.3f}", va="center", fontsize=7.5, color="#334155")
+
+        legend_handles = [
+            Patch(facecolor="#6B21A8", label="Lag Features"),
+            Patch(facecolor="#06B6D4", label="Rolling Mean"),
+        ]
+        ax_bar.legend(handles=legend_handles, loc="lower right", fontsize=7.5, framealpha=0.9)
+
+        cmap = plt.get_cmap("coolwarm")
+        for y_i, feat_idx in enumerate(order):
+            s_vals = shap_values[:, feat_idx]
+            f_vals = feature_values[:, feat_idx]
+            f_min, f_max = float(np.min(f_vals)), float(np.max(f_vals))
+            if f_max > f_min:
+                norm_f = (f_vals - f_min) / (f_max - f_min)
+            else:
+                norm_f = np.full_like(f_vals, 0.5)
+            rng = np.random.default_rng(42 + y_i)
+            jitter = rng.uniform(-0.22, 0.22, size=len(s_vals))
+            ax_bee.scatter(
+                s_vals,
+                np.full_like(s_vals, y_i, dtype=float) + jitter,
+                c=norm_f,
+                cmap=cmap,
+                vmin=0.0,
+                vmax=1.0,
+                s=14,
+                alpha=0.75,
+                edgecolors="none"
+            )
+
+        ax_bee.axvline(0.0, color="#475569", linestyle="--", linewidth=1.0)
+        ax_bee.set_yticks(y_pos)
+        ax_bee.set_yticklabels(top_names, fontsize=8)
+        ax_bee.set_xlabel("SHAP Value (Dampak Prediksi)", fontsize=8.5)
+        ax_bee.set_title(f"SHAP Summary Impact ({ticker})", fontsize=9.5, fontweight="bold", pad=8, color="#1E293B")
+        ax_bee.grid(True, axis="x", linestyle="--", alpha=0.35)
+
+        sm = ScalarMappable(norm=Normalize(vmin=0.0, vmax=1.0), cmap=cmap)
+        sm.set_array([])
+        cbar = fig.colorbar(sm, ax=ax_bee, pad=0.02, fraction=0.045)
+        cbar.set_ticks([0.0, 1.0])
+        cbar.set_ticklabels(["Rendah", "Tinggi"])
+        cbar.ax.tick_params(labelsize=7.5)
+        cbar.set_label("Nilai Fitur", fontsize=8)
+
+    def _plot_learning_curve_panel(self, ax_lc, lc_data, ticker):
+        train_sizes = np.asarray(lc_data["train_sizes"], dtype=float)
+        tr_mean = np.asarray(lc_data["train_mae_mean"], dtype=float)
+        tr_std = np.asarray(lc_data["train_mae_std"], dtype=float)
+        va_mean = np.asarray(lc_data["val_mae_mean"], dtype=float)
+        va_std = np.asarray(lc_data["val_mae_std"], dtype=float)
+        n_splits = lc_data.get("n_splits", 5)
+
+        ax_lc.plot(train_sizes, tr_mean, "o-", color="#6B21A8", linewidth=2, markersize=5, label=f"Training MAE (Akhir: {tr_mean[-1]:,.3f})")
+        ax_lc.fill_between(train_sizes, np.maximum(0.0, tr_mean - tr_std), tr_mean + tr_std, color="#6B21A8", alpha=0.12)
+
+        ax_lc.plot(train_sizes, va_mean, "s-", color="#0891B2", linewidth=2, markersize=5, label=f"Validation MAE (Akhir: {va_mean[-1]:,.3f})")
+        ax_lc.fill_between(train_sizes, np.maximum(0.0, va_mean - va_std), va_mean + va_std, color="#06B6D4", alpha=0.14)
+
+        ax_lc.set_title(f"Learning Curve - Random Forest ({ticker}, {n_splits}-Fold TimeSeriesSplit)", fontsize=9.5, fontweight="bold", pad=8, color="#1E293B")
+        ax_lc.set_xlabel("Jumlah Sampel Data Latih", fontsize=8.5)
+        ax_lc.set_ylabel("Mean Absolute Error (MAE)", fontsize=8.5)
+        ax_lc.legend(loc="upper right", fontsize=8, framealpha=0.9)
+        ax_lc.grid(True, linestyle="--", alpha=0.35)
+
+    def _render_var_analysis_figure(self, fig, var_analysis, ticker):
+        has_shap = bool(var_analysis and var_analysis.get("shap"))
+        has_lc = bool(var_analysis and var_analysis.get("learning_curve"))
+
+        fig.clear()
+        if not has_shap and not has_lc:
+            self._init_empty_var_chart(fig)
+            return
+
+        if has_shap and has_lc:
+            gs = fig.add_gridspec(2, 2, height_ratios=[1.15, 1.0], hspace=0.42, wspace=0.32)
+            ax_bar = fig.add_subplot(gs[0, 0])
+            ax_bee = fig.add_subplot(gs[0, 1])
+            ax_lc = fig.add_subplot(gs[1, :])
+            self._plot_shap_panels(ax_bar, ax_bee, var_analysis["shap"], ticker, fig)
+            self._plot_learning_curve_panel(ax_lc, var_analysis["learning_curve"], ticker)
+            fig.subplots_adjust(left=0.12, right=0.94, top=0.93, bottom=0.09)
+        elif has_shap:
+            gs = fig.add_gridspec(1, 2, wspace=0.34)
+            ax_bar = fig.add_subplot(gs[0, 0])
+            ax_bee = fig.add_subplot(gs[0, 1])
+            self._plot_shap_panels(ax_bar, ax_bee, var_analysis["shap"], ticker, fig)
+            fig.subplots_adjust(left=0.13, right=0.93, top=0.90, bottom=0.12)
+        else:
+            ax_lc = fig.add_subplot(1, 1, 1)
+            self._plot_learning_curve_panel(ax_lc, var_analysis["learning_curve"], ticker)
+            fig.tight_layout(pad=2.0)
+
+    def _render_var_analysis_tab(self, var_analysis, ticker):
+        self._render_var_analysis_figure(self.var_fig, var_analysis, ticker)
+        self.var_canvas.draw()
+
+        active_parts = []
+        if var_analysis and var_analysis.get("shap"):
+            active_parts.append("SHAP analysis")
+        if var_analysis and var_analysis.get("learning_curve"):
+            active_parts.append("Learning Curve")
+
+        if active_parts:
+            self.lbl_var_status.config(text=f"• Aktif: {', '.join(active_parts)}")
+        else:
+            self.lbl_var_status.config(text="• Tidak ada analisis aktif")
+
+    def _action_popup_var_chart(self):
+        var_analysis = self.last_results.get("var_analysis") if self.last_results else None
+        if not var_analysis or (not var_analysis.get("shap") and not var_analysis.get("learning_curve")):
+            messagebox.showinfo("Informasi", "Belum ada hasil analisis variabel. Aktifkan centang pada Pengaturan lalu jalankan peramalan.")
+            return
+
+        ticker = self.last_results["ticker"]
+        pop_fig = plt.figure(figsize=(13, 8.5), facecolor="white")
+        self._render_var_analysis_figure(pop_fig, var_analysis, ticker)
+
+        try:
+            mngr = pop_fig.canvas.manager
+            mngr.set_window_title(f"Yahoo Finance Forecaster - Analisis Variabel {ticker} (HD)")
+            if hasattr(mngr, "window"):
+                mngr.window.deiconify()
+                mngr.window.attributes("-topmost", True)
+                mngr.window.lift()
+        except Exception:
+            pass
+
+        plt.show()
+
     def _setup_log_tab(self):
         log_top_bar = tk.Frame(self.tab_log, bg=self.colors["bg"])
         log_top_bar.pack(side=tk.TOP, fill=tk.X, pady=(6, 6), padx=6)
@@ -402,6 +683,352 @@ class YahooForecasterGUI(tk.Tk):
 
     def _action_clear_log(self):
         self.txt_log.delete("1.0", tk.END)
+
+    def _setup_history_tab(self):
+        hist_top_bar = tk.Frame(self.tab_history, bg=self.colors["bg"])
+        hist_top_bar.pack(side=tk.TOP, fill=tk.X, pady=(6, 4), padx=6)
+
+        title_wrap = tk.Frame(hist_top_bar, bg=self.colors["bg"])
+        title_wrap.pack(side=tk.LEFT, pady=2)
+
+        lbl_hist_title = tk.Label(
+            title_wrap,
+            text="🕒 Riwayat Peramalan",
+            bg=self.colors["bg"],
+            font=("Segoe UI", 10, "bold"),
+            fg=self.colors["primary_dark"]
+        )
+        lbl_hist_title.pack(side=tk.LEFT)
+
+        self.lbl_hist_count = tk.Label(
+            title_wrap,
+            text="(0 entri)",
+            bg=self.colors["bg"],
+            font=("Segoe UI", 9),
+            fg=self.colors["text_muted"]
+        )
+        self.lbl_hist_count.pack(side=tk.LEFT, padx=(6, 0))
+
+        btn_frame = tk.Frame(hist_top_bar, bg=self.colors["bg"])
+        btn_frame.pack(side=tk.RIGHT)
+
+        ttk.Button(btn_frame, text="📂 Muat Hasil", style="Primary.TButton", command=self._action_load_history).pack(side=tk.LEFT, padx=(0, 4))
+        ttk.Button(btn_frame, text="⚙️ Pakai Parameter", style="Accent.TButton", command=self._action_apply_history_params).pack(side=tk.LEFT, padx=(0, 4))
+        ttk.Button(btn_frame, text="🗑️ Hapus", style="Quick.TButton", command=self._action_delete_history).pack(side=tk.LEFT, padx=(0, 4))
+        ttk.Button(btn_frame, text="🧹 Bersihkan", style="Quick.TButton", command=self._action_clear_history).pack(side=tk.LEFT)
+
+        hist_filter_bar = tk.Frame(self.tab_history, bg=self.colors["bg"])
+        hist_filter_bar.pack(side=tk.TOP, fill=tk.X, pady=(0, 6), padx=6)
+
+        lbl_filter = tk.Label(hist_filter_bar, text="Cari Ticker / Perusahaan:", bg=self.colors["bg"], font=("Segoe UI", 8, "bold"), fg=self.colors["text_muted"])
+        lbl_filter.pack(side=tk.LEFT, padx=(0, 6))
+
+        self.var_hist_filter = tk.StringVar(self)
+        self.var_hist_filter.trace_add("write", lambda *_: self._refresh_history_tree())
+        ent_filter = ttk.Entry(hist_filter_bar, textvariable=self.var_hist_filter, width=26, font=("Segoe UI", 9))
+        ent_filter.pack(side=tk.LEFT)
+
+        ttk.Button(hist_filter_bar, text="✕", style="Quick.TButton", width=3, command=lambda: self.var_hist_filter.set("")).pack(side=tk.LEFT, padx=(4, 0))
+
+        lbl_hint = tk.Label(
+            hist_filter_bar,
+            text="💡 Klik dua kali baris untuk memuat grafik & tabel hasil",
+            bg=self.colors["bg"],
+            font=("Segoe UI", 8, "italic"),
+            fg=self.colors["text_muted"]
+        )
+        lbl_hint.pack(side=tk.RIGHT)
+
+        hist_container = tk.Frame(self.tab_history, bg="#FFFFFF", bd=1, relief="solid")
+        hist_container.pack(fill=tk.BOTH, expand=True, padx=6, pady=(0, 6))
+
+        columns = ("no", "timestamp", "ticker", "name", "date_range", "freq_steps", "mape", "mae", "last_price", "pred_price")
+        self.hist_tree = ttk.Treeview(hist_container, columns=columns, show="headings", selectmode="browse")
+
+        self.hist_tree.heading("no", text="No")
+        self.hist_tree.heading("timestamp", text="Waktu Eksekusi")
+        self.hist_tree.heading("ticker", text="Ticker")
+        self.hist_tree.heading("name", text="Nama Perusahaan")
+        self.hist_tree.heading("date_range", text="Rentang Data")
+        self.hist_tree.heading("freq_steps", text="Frek / Steps")
+        self.hist_tree.heading("mape", text="MAPE")
+        self.hist_tree.heading("mae", text="MAE")
+        self.hist_tree.heading("last_price", text="Harga Terakhir")
+        self.hist_tree.heading("pred_price", text="Proyeksi Akhir")
+
+        self.hist_tree.column("no", width=45, anchor="center", stretch=False)
+        self.hist_tree.column("timestamp", width=135, anchor="center")
+        self.hist_tree.column("ticker", width=85, anchor="center")
+        self.hist_tree.column("name", width=175, anchor="w")
+        self.hist_tree.column("date_range", width=165, anchor="center")
+        self.hist_tree.column("freq_steps", width=90, anchor="center")
+        self.hist_tree.column("mape", width=75, anchor="e")
+        self.hist_tree.column("mae", width=90, anchor="e")
+        self.hist_tree.column("last_price", width=105, anchor="e")
+        self.hist_tree.column("pred_price", width=155, anchor="e")
+
+        vsb = ttk.Scrollbar(hist_container, orient="vertical", command=self.hist_tree.yview)
+        hsb = ttk.Scrollbar(hist_container, orient="horizontal", command=self.hist_tree.xview)
+        self.hist_tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
+
+        self.hist_tree.grid(row=0, column=0, sticky="nsew")
+        vsb.grid(row=0, column=1, sticky="ns")
+        hsb.grid(row=1, column=0, sticky="ew")
+
+        hist_container.rowconfigure(0, weight=1)
+        hist_container.columnconfigure(0, weight=1)
+
+        self.hist_tree.bind("<Double-1>", self._on_history_double_click)
+        self.hist_tree.bind("<Delete>", lambda _e: self._action_delete_history())
+
+        self._load_history_from_disk()
+        self._refresh_history_tree()
+
+    @staticmethod
+    def _serialize_series(series):
+        return [
+            [dt.strftime("%Y-%m-%d") if hasattr(dt, "strftime") else str(dt), float(val)]
+            for dt, val in series.items()
+        ]
+
+    @staticmethod
+    def _deserialize_series(pairs):
+        if not pairs:
+            return pd.Series(dtype=float)
+        dates = pd.to_datetime([p[0] for p in pairs])
+        values = [float(p[1]) for p in pairs]
+        return pd.Series(values, index=dates)
+
+    def _load_history_from_disk(self):
+        if not os.path.exists(self.history_file):
+            self.history_items = []
+            return
+        try:
+            with open(self.history_file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            if isinstance(data, list):
+                self.history_items = [item for item in data if isinstance(item, dict) and "id" in item]
+            else:
+                self.history_items = []
+        except Exception as e:
+            self.history_items = []
+            self._log(f"Peringatan: Gagal memuat file riwayat ({str(e)}).")
+
+    def _save_history_to_disk(self):
+        try:
+            with open(self.history_file, "w", encoding="utf-8") as f:
+                json.dump(self.history_items[:100], f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            self._log(f"Peringatan: Gagal menyimpan file riwayat ({str(e)}).")
+
+    def _add_history_entry(self, b):
+        last_price = float(b["data"].iloc[-1])
+        pred_end_price = float(b["final_predictions"].iloc[-1])
+        pred_change_pct = ((pred_end_price - last_price) / last_price) * 100 if last_price != 0 else 0.0
+
+        var_analysis = b.get("var_analysis") or {}
+        serialized_var_analysis = {}
+        if var_analysis.get("shap"):
+            shap_d = var_analysis["shap"]
+            serialized_var_analysis["shap"] = {
+                "feature_names": list(shap_d["feature_names"]),
+                "shap_values": np.asarray(shap_d["shap_values"], dtype=float).tolist(),
+                "feature_values": np.asarray(shap_d["feature_values"], dtype=float).tolist(),
+            }
+        if var_analysis.get("learning_curve"):
+            serialized_var_analysis["learning_curve"] = var_analysis["learning_curve"]
+
+        now = datetime.now()
+        entry = {
+            "id": now.strftime("%Y%m%d_%H%M%S_%f"),
+            "timestamp": now.strftime("%Y-%m-%d %H:%M:%S"),
+            "ticker": b["ticker"],
+            "name": b["name"],
+            "sector": b["sector"],
+            "industry": b["industry"],
+            "start_date": b["start_date"],
+            "end_date": b["end_date"],
+            "freq": b["freq"],
+            "freq_desc": b["freq_desc"],
+            "steps": int(b["steps"]),
+            "mae": float(b["mae"]),
+            "mape": float(b["mape"]),
+            "last_price": last_price,
+            "pred_end_price": pred_end_price,
+            "pred_change_pct": pred_change_pct,
+            "lags": int(b["lags"]),
+            "n_estimators": int(b["n_estimators"]),
+            "var_analysis": serialized_var_analysis,
+            "series": {
+                "train": self._serialize_series(b["train"]),
+                "test": self._serialize_series(b["test"]),
+                "val_predictions": self._serialize_series(b["val_predictions"]),
+                "data": self._serialize_series(b["data"]),
+                "final_predictions": self._serialize_series(b["final_predictions"]),
+            },
+        }
+        self.history_items.insert(0, entry)
+        self.history_items = self.history_items[:100]
+        self._save_history_to_disk()
+        self._refresh_history_tree()
+
+    def _refresh_history_tree(self):
+        for item in self.hist_tree.get_children():
+            self.hist_tree.delete(item)
+
+        query = self.var_hist_filter.get().strip().lower() if hasattr(self, "var_hist_filter") else ""
+        filtered = [
+            entry for entry in self.history_items
+            if not query or query in entry.get("ticker", "").lower() or query in entry.get("name", "").lower()
+        ]
+
+        for idx, entry in enumerate(filtered, start=1):
+            pct = float(entry.get("pred_change_pct", 0.0))
+            pct_sign = "+" if pct >= 0 else ""
+            pred_end_str = f"{float(entry.get('pred_end_price', 0.0)):,.2f} ({pct_sign}{pct:.2f}%)"
+            self.hist_tree.insert(
+                "",
+                tk.END,
+                iid=entry["id"],
+                values=(
+                    idx,
+                    entry.get("timestamp", "-"),
+                    entry.get("ticker", "-"),
+                    entry.get("name", "-"),
+                    f"{entry.get('start_date', '-')} s/d {entry.get('end_date', '-')}",
+                    f"{entry.get('freq', '-')} / {entry.get('steps', '-')}",
+                    f"{float(entry.get('mape', 0.0)):.2f}%",
+                    f"{float(entry.get('mae', 0.0)):,.2f}",
+                    f"{float(entry.get('last_price', 0.0)):,.2f}",
+                    pred_end_str,
+                ),
+            )
+
+        total_count = len(self.history_items)
+        if query:
+            self.lbl_hist_count.config(text=f"({len(filtered)} dari {total_count} entri)")
+        else:
+            self.lbl_hist_count.config(text=f"({total_count} entri)")
+
+    def _get_selected_history_entry(self):
+        sel = self.hist_tree.selection()
+        if not sel:
+            messagebox.showinfo("Informasi", "Silakan pilih salah satu baris riwayat terlebih dahulu.")
+            return None
+        entry_id = sel[0]
+        for entry in self.history_items:
+            if entry["id"] == entry_id:
+                return entry
+        return None
+
+    def _on_history_double_click(self, event):
+        if self.hist_tree.identify_region(event.x, event.y) in ("cell", "tree"):
+            self._action_load_history()
+
+    def _apply_form_params(self, entry):
+        self._set_ticker(entry.get("ticker", ""))
+        self.ent_start.delete(0, tk.END)
+        self.ent_start.insert(0, entry.get("start_date", ""))
+        self.ent_end.delete(0, tk.END)
+        self.ent_end.insert(0, entry.get("end_date", ""))
+        freq = entry.get("freq", "B")
+        self.cmb_freq.current(0 if freq == "B" else 1)
+        self.spn_steps.delete(0, tk.END)
+        self.spn_steps.insert(0, str(entry.get("steps", "")))
+        va = entry.get("var_analysis") or {}
+        self.var_use_shap.set(bool(va.get("shap")))
+        self.var_use_lc.set(bool(va.get("learning_curve")))
+
+    def _action_apply_history_params(self):
+        if self.is_running:
+            messagebox.showwarning("Peringatan", "Proses peramalan sedang berjalan. Harap tunggu hingga selesai.")
+            return
+        entry = self._get_selected_history_entry()
+        if not entry:
+            return
+        self._apply_form_params(entry)
+        self.lbl_status.config(text=f"Parameter dari riwayat {entry['ticker']} diisikan ke form.")
+        self._log(f"Parameter riwayat dimuat ke form: {entry['ticker']} ({entry['start_date']} s/d {entry['end_date']}, {entry['freq']}, {entry['steps']} steps).")
+
+    def _action_load_history(self):
+        if self.is_running:
+            messagebox.showwarning("Peringatan", "Proses peramalan sedang berjalan. Harap tunggu hingga selesai.")
+            return
+        entry = self._get_selected_history_entry()
+        if not entry:
+            return
+
+        series_data = entry.get("series")
+        if not series_data:
+            messagebox.showwarning("Data Tidak Tersedia", "Data grafik/tabel tidak tersedia pada entri riwayat ini. Gunakan 'Pakai Parameter' untuk menjalankan ulang.")
+            return
+
+        try:
+            bundle = {
+                "ticker": entry["ticker"],
+                "name": entry.get("name", entry["ticker"]),
+                "sector": entry.get("sector", "N/A"),
+                "industry": entry.get("industry", "N/A"),
+                "start_date": entry.get("start_date", "-"),
+                "end_date": entry.get("end_date", "-"),
+                "freq": entry.get("freq", "B"),
+                "freq_desc": entry.get("freq_desc", "B (Business Days)"),
+                "train": self._deserialize_series(series_data["train"]),
+                "test": self._deserialize_series(series_data["test"]),
+                "val_predictions": self._deserialize_series(series_data["val_predictions"]),
+                "data": self._deserialize_series(series_data["data"]),
+                "final_predictions": self._deserialize_series(series_data["final_predictions"]),
+                "steps": int(entry["steps"]),
+                "mae": float(entry["mae"]),
+                "mape": float(entry["mape"]),
+                "lags": int(entry.get("lags", 10)),
+                "n_estimators": int(entry.get("n_estimators", 100)),
+                "var_analysis": entry.get("var_analysis", {}),
+            }
+        except Exception as e:
+            messagebox.showerror("Error", f"Gagal memuat data riwayat:\n{str(e)}")
+            return
+
+        self._apply_form_params(entry)
+        self._update_company_info(
+            bundle["name"],
+            bundle["sector"],
+            bundle["industry"],
+            bundle["ticker"],
+            bundle["start_date"],
+            bundle["end_date"],
+            bundle["freq_desc"],
+            bundle["steps"],
+        )
+        self.lbl_status.config(text=f"Menampilkan hasil riwayat {bundle['ticker']} ({entry['timestamp']}).")
+        self._log(f"Riwayat dimuat: {bundle['ticker']} ({entry['timestamp']}).")
+        self._display_results(bundle, save_history=False)
+
+    def _action_delete_history(self):
+        if self.is_running:
+            messagebox.showwarning("Peringatan", "Proses peramalan sedang berjalan. Harap tunggu hingga selesai.")
+            return
+        entry = self._get_selected_history_entry()
+        if not entry:
+            return
+        self.history_items = [item for item in self.history_items if item["id"] != entry["id"]]
+        self._save_history_to_disk()
+        self._refresh_history_tree()
+        self._log(f"Entri riwayat dihapus: {entry.get('ticker', '-')} ({entry.get('timestamp', '-')}).")
+
+    def _action_clear_history(self):
+        if self.is_running:
+            messagebox.showwarning("Peringatan", "Proses peramalan sedang berjalan. Harap tunggu hingga selesai.")
+            return
+        if not self.history_items:
+            messagebox.showinfo("Informasi", "Riwayat peramalan sudah kosong.")
+            return
+        if not messagebox.askyesno("Konfirmasi", "Hapus seluruh riwayat peramalan secara permanen?"):
+            return
+        self.history_items = []
+        self._save_history_to_disk()
+        self._refresh_history_tree()
+        self._log("Seluruh riwayat peramalan berhasil dibersihkan.")
 
     def _setup_tutorial_tab(self):
         tut_top_bar = tk.Frame(self.tab_tutorial, bg=self.colors["bg"])
@@ -439,7 +1066,8 @@ class YahooForecasterGUI(tk.Tk):
             ("• Jenis Frekuensi Data:\n", "bullet"),
             ("  - B (Business Days): Hanya hari bursa aktif (Senin–Jumat). Sangat direkomendasikan untuk analisis saham.\n", "bullet"),
             ("  - D (Days): Setiap hari kalender termasuk akhir pekan (mengisi hari libur dengan harga terakhir).\n", "bullet"),
-            ("• Forecast Steps: Masukkan berapa langkah / hari ke depan yang ingin diproyeksikan (contoh: 10, 30, atau 60).\n\n", "bullet"),
+            ("• Forecast Steps: Masukkan berapa langkah / hari ke depan yang ingin diproyeksikan (contoh: 10, 30, atau 60).\n", "bullet"),
+            ("• Pengaturan (Opsional): Centang 'SHAP analysis' dan/atau 'Learning Curve' jika ingin menampilkan analisis variabel dan kurva pembelajaran pada tab '🔬 Analisis Variabel'.\n\n", "bullet"),
 
             ("4. Memulai Peramalan (Mulai Peramalan)\n", "h2"),
             ("• Klik tombol '🚀 MULAI PERAMALAN'. Seluruh proses dijalankan di background thread sehingga GUI tetap responsif.\n", "bullet"),
@@ -449,7 +1077,9 @@ class YahooForecasterGUI(tk.Tk):
             ("5. Membaca & Mengekspor Hasil Prediksi\n", "h2"),
             ("• Tab '📊 Grafik Prediksi': Menampilkan 2 grafik bersusun (Evaluasi Model dan Hasil Proyeksi Masa Depan). Tersedia tombol 'Tampilkan Jendela Pop-up HD' untuk fitur Zoom dan Pan interaktif.\n", "bullet"),
             ("• Tab '📋 Tabel Rincian Prediksi': Menampilkan daftar tanggal prediksi, estimasi harga, selisih nominal, dan % perubahan. Klik '💾 Ekspor Hasil ke CSV' untuk menyimpan hasil ke file spreadsheet/Excel.\n", "bullet"),
-            ("• Tab '📝 Log Komputasi': Memantau catatan teknis proses download data, evaluasi error, dan eksekusi model secara langsung.\n\n", "bullet"),
+            ("• Tab '🔬 Analisis Variabel': Menampilkan grafik SHAP analysis dan/atau Learning Curve sesuai kotak centang yang diaktifkan pada Pengaturan.\n", "bullet"),
+            ("• Tab '📝 Log Komputasi': Memantau catatan teknis proses download data, evaluasi error, dan eksekusi model secara langsung.\n", "bullet"),
+            ("• Tab '🕒 Riwayat': Menyimpan riwayat peramalan yang pernah dijalankan secara otomatis. Anda dapat mencari, memuat ulang grafik & tabel hasil (klik dua kali / 'Muat Hasil'), memakai ulang parameter, atau menghapus riwayat.\n\n", "bullet"),
 
             ("6. Fitur Tombol Reset Form\n", "h2"),
             ("• Jika ingin meramal saham lain atau membersihkan seluruh data, klik tombol '🔄 Reset' di kanan atas panel Parameter Peramalan.\n", "bullet"),
@@ -578,22 +1208,30 @@ class YahooForecasterGUI(tk.Tk):
             messagebox.showerror("Error Input", "Periode Prediksi (Steps) harus berupa angka bulat positif lebih besar dari 0.")
             return
 
+        use_shap = bool(self.var_use_shap.get())
+        use_lc = bool(self.var_use_lc.get())
+
         self.is_running = True
         self.btn_run.config(state="disabled")
         self.btn_reset.config(state="disabled")
+        self.chk_shap.config(state="disabled")
+        self.chk_lc.config(state="disabled")
         self.pbar["value"] = 0
         self.lbl_status.config(text="Memulai proses peramalan...")
         self._log(f"=== Memulai Peramalan untuk {ticker} ===")
         self._log(f"Rentang: {start_date} s/d {end_date} | Frekuensi: {freq_desc} | Steps: {steps}")
         self._log("Model: ForecasterDirect (10 Lags, 10 Rolling Means, 100 Trees - Fixed)")
+        if use_shap or use_lc:
+            opts = [name for flag, name in ((use_shap, "SHAP analysis"), (use_lc, "Learning Curve")) if flag]
+            self._log(f"Analisis Variabel aktif: {', '.join(opts)}")
 
         threading.Thread(
             target=self._forecast_worker,
-            args=(ticker, start_date, end_date, freq, steps),
+            args=(ticker, start_date, end_date, freq, steps, use_shap, use_lc),
             daemon=True
         ).start()
 
-    def _forecast_worker(self, ticker, start_date, end_date, freq, steps):
+    def _forecast_worker(self, ticker, start_date, end_date, freq, steps, use_shap=False, use_lc=False):
         try:
             freq_desc = "B (Business Days)" if freq == "B" else "D (Days)"
 
@@ -682,6 +1320,57 @@ class YahooForecasterGUI(tk.Tk):
             forecaster_final.fit(y=data)
             final_predictions = forecaster_final.predict(steps=steps)
 
+            var_analysis = {}
+            if use_shap or use_lc:
+                self.after(0, lambda: self.pbar.config(value=82))
+                X_train, y_train_dict = forecaster_final.create_train_X_y(y=data)
+                first_step = list(forecaster_final.estimators_.keys())[0]
+
+                if use_shap:
+                    self.after(0, lambda: self.lbl_status.config(text="Menghitung SHAP analysis..."))
+                    self.after(0, lambda: self._log("Menghitung SHAP analysis (TreeExplainer)..."))
+                    if shap is None:
+                        self.after(0, lambda: self._log("Peringatan: Pustaka 'shap' belum terpasang. SHAP analysis dilewati."))
+                    else:
+                        X_sample = X_train.tail(200)
+                        explainer = shap.TreeExplainer(forecaster_final.estimators_[first_step])
+                        shap_vals = np.asarray(explainer.shap_values(X_sample), dtype=float)
+                        if shap_vals.ndim == 3:
+                            shap_vals = shap_vals[0]
+                        var_analysis["shap"] = {
+                            "feature_names": list(X_sample.columns),
+                            "shap_values": shap_vals,
+                            "feature_values": X_sample.to_numpy(dtype=float),
+                        }
+                        self.after(0, lambda n=len(X_sample): self._log(f"SHAP analysis selesai ({n} sampel)."))
+
+                if use_lc:
+                    self.after(0, lambda: self.lbl_status.config(text="Menghitung Learning Curve..."))
+                    self.after(0, lambda: self._log("Menghitung Learning Curve (TimeSeriesSplit CV)..."))
+                    y_target = y_train_dict[first_step]
+                    n_splits = min(5, max(2, len(X_train) // 5))
+                    cv = TimeSeriesSplit(n_splits=n_splits)
+                    train_sizes, train_scores, val_scores = learning_curve(
+                        RandomForestRegressor(n_estimators=n_estimators, random_state=42, n_jobs=-1),
+                        X_train,
+                        y_target,
+                        cv=cv,
+                        scoring="neg_mean_absolute_error",
+                        train_sizes=np.linspace(0.3, 1.0, 5),
+                        n_jobs=-1,
+                    )
+                    train_mae = -train_scores
+                    val_mae = -val_scores
+                    var_analysis["learning_curve"] = {
+                        "train_sizes": train_sizes.tolist(),
+                        "train_mae_mean": train_mae.mean(axis=1).tolist(),
+                        "train_mae_std": train_mae.std(axis=1).tolist(),
+                        "val_mae_mean": val_mae.mean(axis=1).tolist(),
+                        "val_mae_std": val_mae.std(axis=1).tolist(),
+                        "n_splits": int(n_splits),
+                    }
+                    self.after(0, lambda s=n_splits: self._log(f"Learning Curve selesai ({s}-Fold TimeSeriesSplit)."))
+
             self.after(0, lambda: self.pbar.config(value=100))
             self.after(0, lambda: self.lbl_status.config(text="Peramalan selesai dengan sukses!"))
             self.after(0, lambda: self._log("Peramalan Berhasil Diselesaikan!"))
@@ -691,6 +1380,10 @@ class YahooForecasterGUI(tk.Tk):
                 "name": name,
                 "sector": sector,
                 "industry": industry,
+                "start_date": start_date,
+                "end_date": end_date,
+                "freq": freq,
+                "freq_desc": freq_desc,
                 "train": train,
                 "test": test,
                 "val_predictions": val_predictions,
@@ -700,7 +1393,8 @@ class YahooForecasterGUI(tk.Tk):
                 "mae": error_mae,
                 "mape": mape_pct,
                 "lags": lags,
-                "n_estimators": n_estimators
+                "n_estimators": n_estimators,
+                "var_analysis": var_analysis,
             }
 
             self.after(0, lambda: self._display_results(bundle))
@@ -717,6 +1411,8 @@ class YahooForecasterGUI(tk.Tk):
         self.is_running = False
         self.btn_run.config(state="normal")
         self.btn_reset.config(state="normal")
+        self.chk_shap.config(state="normal")
+        self.chk_lc.config(state="normal")
 
     def _action_reset_form(self):
         if self.is_running:
@@ -728,6 +1424,8 @@ class YahooForecasterGUI(tk.Tk):
         self.ent_end.delete(0, tk.END)
         self.spn_steps.delete(0, tk.END)
         self.cmb_freq.current(0)
+        self.var_use_shap.set(False)
+        self.var_use_lc.set(False)
 
         self.lbl_comp_ticker.config(text="Kode Ticker: -")
         self.lbl_comp_name.config(text="Nama: -")
@@ -756,10 +1454,12 @@ class YahooForecasterGUI(tk.Tk):
         self.fig.tight_layout(h_pad=3.0)
         self.canvas.draw()
 
+        self._render_var_analysis_tab({}, "")
+
         self.last_results = None
         self._log("Semua kotak input dan data peramalan berhasil direset.")
 
-    def _display_results(self, b):
+    def _display_results(self, b, save_history=True):
         self.last_results = b
 
         self.lbl_mape.config(text=f"{b['mape']:.2f}%")
@@ -792,6 +1492,10 @@ class YahooForecasterGUI(tk.Tk):
             ))
 
         self._render_charts(b["train"], b["test"], b["val_predictions"], b["data"], b["final_predictions"], b["ticker"])
+        self._render_var_analysis_tab(b.get("var_analysis", {}), b["ticker"])
+
+        if save_history:
+            self._add_history_entry(b)
 
         self.notebook.select(self.tab_charts)
 
