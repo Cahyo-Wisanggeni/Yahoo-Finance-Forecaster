@@ -8,16 +8,24 @@ Format berkas ini mengacu pada [Keep a Changelog](https://keepachangelog.com/id/
 
 ## [Belum Dirilis] (Unreleased)
 
-### Rencana Fitur
-- Dukungan model peramalan tambahan (seperti XGBoost, LightGBM, atau Prophet).
-- Optimasi pemilihan hyperparameter dan integrasi visualisasi candlestick atau indikator teknikal lanjutan.
+### Ditambahkan
+- **Tab Analisis Variabel**: Visualisasi opsional **SHAP Feature Importance & Summary Impact** (`shap.TreeExplainer`) serta **Learning Curve** (`TimeSeriesSplit` cross-validation) beserta tombol pop-up HD.
+- **Kotak Pengaturan Opsional**: Pilihan centang *SHAP analysis* dan *Learning Curve* pada panel Parameter Peramalan.
+- **Tab Riwayat**: Penyimpanan otomatis riwayat peramalan ke `forecast_history.json` lengkap dengan fitur pencarian, muat ulang hasil, pakai ulang parameter, dan hapus riwayat.
+
+### Diubah
+- **Fokus Edisi Tunggal (GUI)**: Seluruh berkas aplikasi GUI (`app.py`, `requirements.txt`, `run_gui.bat`, `run_gui_debug.bat`, `CONTRIBUTING.md`) dipindahkan langsung ke direktori utama (root) repositori agar struktur lebih bersih tanpa duplikasi berkas.
+- Pembaruan `README.md`, `CONTRIBUTING.md`, dan `.gitignore` mengikuti struktur baru berbasis GUI.
+
+### Dihapus
+- Menghapus direktori **Edisi Terminal (CLI)** (`Yahoo Finance Forecaster CLI/`) beserta tangkapan layar pratinjau CLI (`assets/cli_preview.png`, `assets/cli_preview_v2.png`).
 
 ---
 
 ## [1.0.0] - 2026-11-17
 
 ### Rilis Perdana Stabil (Initial Stable Release)
-Rilis resmi perdana platform peramalan pergerakan harga pasar keuangan **Yahoo Finance Forecaster**, menghadirkan dua edisi terintegrasi: **Terminal CLI** dan **Desktop GUI**.
+Rilis resmi perdana platform peramalan pergerakan harga pasar keuangan **Yahoo Finance Forecaster**, awalnya menghadirkan dua edisi: **Terminal CLI** dan **Desktop GUI**.
 
 ### Fitur Utama
 
@@ -30,14 +38,6 @@ Rilis resmi perdana platform peramalan pergerakan harga pasar keuangan **Yahoo F
   - Total 20 fitur prediktor deret waktu.
 - **Diferensiasi Ordo Pertama**: Transformasi data harga non-stasioner menjadi deret stasioner secara otomatis.
 - **Validasi Evaluasi Internal**: Pemisahan data latih dan data uji (80% / 20%) untuk menghitung metrik evaluasi Mean Absolute Error (MAE) dan Mean Absolute Percentage Error (MAPE).
-
-#### Edisi Terminal (CLI)
-- Antarmuka terminal interaktif dengan pewarnaan ANSI modern (*Yahoo Purple* dan *Cyan*).
-- Tampilan logo ASCII banner *Solid Block Font*.
-- Validasi interaktif kode ticker, rentang tanggal historis (mendukung format `YYYY-MM-DD` dan `YY-MM-DD`), jenis frekuensi data (`B` / `D`), dan jumlah periode langkah (*steps*).
-- Tampilan tabel ringkasan hasil peramalan ASCII di terminal.
-- Jendela pop-up grafik Matplotlib beresolusi tinggi (HD) yang memuat grafik evaluasi model dan grafik proyeksi masa depan.
-- Dukungan argumen baris perintah `--version` dan `-v`.
 
 #### Edisi Desktop (GUI)
 - Antarmuka grafis desktop modern berbasis Python `tkinter` dan `ttk` murni tanpa ketergantungan pustaka antarmuka eksternal yang berat.
@@ -52,3 +52,6 @@ Rilis resmi perdana platform peramalan pergerakan harga pasar keuangan **Yahoo F
   - **Tutorial**: Panduan penggunaan terintegrasi langsung di dalam aplikasi.
 - Tombol reset parameter dan pembersihan memori kanvas yang aman saat penutupan aplikasi.
 - Skrip peluncuran Windows (`run_gui.bat` dan `run_gui_debug.bat`).
+
+#### Edisi Terminal (CLI) *(Dihapus pasca-v1.0.0)*
+- Antarmuka terminal interaktif dengan pewarnaan ANSI, logo ASCII, validasi input interaktif, tabel ringkasan ASCII, dan pop-up Matplotlib HD.

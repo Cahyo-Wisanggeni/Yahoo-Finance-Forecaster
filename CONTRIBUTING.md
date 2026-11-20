@@ -1,13 +1,13 @@
-# Panduan Kontribusi - Yahoo Finance Forecaster GUI
+# Panduan Kontribusi - Yahoo Finance Forecaster
 
-Terima kasih atas minat Anda untuk berkontribusi pada **Yahoo Finance Forecaster GUI**!
+Terima kasih atas minat Anda untuk berkontribusi pada **Yahoo Finance Forecaster**!
 
 ## Pengaturan Lingkungan Pengembangan (*Development Setup*)
 
 1. Fork dan kloning repositori:
    ```bash
    git clone https://github.com/Cahyo-Wisanggeni/Yahoo-Finance-Forecaster.git
-   cd Yahoo-Finance-Forecaster/"Yahoo Finance Forecaster GUI"
+   cd Yahoo-Finance-Forecaster
    ```
 
 2. Buat dan aktifkan virtual environment:

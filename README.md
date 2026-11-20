@@ -3,26 +3,27 @@
   <img src="assets/logo_v2.png" alt="Yahoo Finance Forecaster Logo" width="650"/>
 
   <p>
-    <strong>Platform Peramalan Deret Waktu (<em>Time Series</em>) Pasar Keuangan Berbasis Machine Learning</strong><br/>
-    <strong>Tersedia dalam Edisi Terminal CLI dan Desktop GUI.</strong>
+    <strong>Aplikasi Desktop Peramalan Deret Waktu (<em>Time Series</em>) Pasar Keuangan Berbasis Machine Learning</strong>
   </p>
 
   <p>
-    Proyeksikan pergerakan harga saham, indeks pasar, komoditas, dan aset kripto secara langsung dari data Yahoo Finance tanpa memerlukan <em>hyperparameter tuning</em> manual yang lambat.
+    Proyeksikan pergerakan harga saham, indeks pasar, komoditas, dan aset kripto secara langsung dari data Yahoo Finance melalui antarmuka desktop modern tanpa memerlukan <em>hyperparameter tuning</em> manual.
   </p>
 
   <p>
     <a href="https://github.com/Cahyo-Wisanggeni/Yahoo-Finance-Forecaster/releases"><img src="https://img.shields.io/badge/Release-v1.0.0-2563EB?style=flat-square" alt="Release v1.0.0"/></a>
     <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.9%2B-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.9+"/></a>
+    <a href="https://docs.python.org/3/library/tkinter.html"><img src="https://img.shields.io/badge/UI-Tkinter_%2F_TTK-FFD43B?style=flat-square&logo=python&logoColor=3776AB" alt="UI: Tkinter / TTK"/></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/Lisensi-MIT-EAB308?style=flat-square" alt="MIT License"/></a>
     <a href="https://skforecast.org/"><img src="https://img.shields.io/badge/Framework-skforecast-0284C7?style=flat-square" alt="skforecast"/></a>
+    <a href="https://scikit-learn.org/"><img src="https://img.shields.io/badge/Scikit_Learn-F7931E?style=flat-square&logo=scikit-learn&logoColor=white" alt="scikit-learn"/></a>
     <a href="https://finance.yahoo.com/"><img src="https://img.shields.io/badge/Data-Yahoo_Finance-7C3AED?style=flat-square" alt="Yahoo Finance"/></a>
   </p>
 
   <p>
-    <a href="Yahoo%20Finance%20Forecaster%20CLI">Edisi CLI</a> &middot;
-    <a href="Yahoo%20Finance%20Forecaster%20GUI">Edisi GUI</a> &middot;
-    <a href="#pratinjau-antarmuka">Pratinjau</a> &middot;
+    <a href="#pratinjau-aplikasi">Pratinjau</a> &middot;
+    <a href="#fitur-utama">Fitur Utama</a> &middot;
+    <a href="#rincian-tab-aplikasi">Tab Aplikasi</a> &middot;
     <a href="#panduan-memulai-cepat">Panduan Memulai</a> &middot;
     <a href="CHANGELOG.md">Catatan Perubahan</a>
   </p>
@@ -33,42 +34,32 @@
 
 ## Daftar Isi
 
-- [Keunggulan Utama](#keunggulan-utama)
-- [Pratinjau Antarmuka](#pratinjau-antarmuka)
-- [Perbandingan Edisi](#perbandingan-edisi)
+- [Keunggulan & Fitur Utama](#keunggulan--fitur-utama)
+- [Pratinjau Aplikasi](#pratinjau-aplikasi)
+- [Rincian Tab Aplikasi](#rincian-tab-aplikasi)
 - [Panduan Memulai Cepat](#panduan-memulai-cepat)
 - [Parameter & Contoh Penggunaan](#parameter--contoh-penggunaan)
-- [Arsitektur Machine Learning](#arsitektur-machine-learning)
+- [Arsitektur Machine Learning & Multi-Threading](#arsitektur-machine-learning--multi-threading)
 - [Struktur Repositori](#struktur-repositori)
 - [Kontribusi & Catatan Perubahan](#kontribusi--catatan-perubahan)
 - [Lisensi](#lisensi)
 
 ---
 
-## Keunggulan Utama
+## Keunggulan & Fitur Utama
 
 - **Peramalan Multi-Langkah Bebas Akumulasi Galat**: Menggunakan strategi `ForecasterDirect` dari `skforecast` yang melatih estimator khusus untuk setiap langkah horizon ke depan, dipadukan dengan `RandomForestRegressor` (100 *decision trees*).
 - **20 Fitur Rekayasa Otomatis**: Menggabungkan 10 variabel lag autoregresif (`lag_1`–`lag_10`), 10 *rolling window means* (`roll_mean_1`–`roll_mean_10`), serta diferensiasi ordo pertama agar deret harga stasioner sebelum pelatihan.
 - **Evaluasi Model Transparan**: Pemisahan data latih dan uji (80/20) secara otomatis menghitung metrik **MAE** (*Mean Absolute Error*) dan **MAPE** (*Mean Absolute Percentage Error*) sebelum menghasilkan proyeksi *out-of-sample*.
-- **Dua Antarmuka untuk Setiap Alur Kerja**:
-  - **[Edisi CLI](Yahoo%20Finance%20Forecaster%20CLI)**: Ringan dan cepat dengan pewarnaan ANSI modern, tabel ringkasan ASCII di terminal, serta jendela pop-up grafik Matplotlib HD.
-  - **[Edisi GUI](Yahoo%20Finance%20Forecaster%20GUI)**: Aplikasi desktop Tkinter *multi-threaded* (anti-freeze) dengan *preset* rentang tahun cepat, deteksi profil emiten otomatis, kanvas grafik interaktif, tabel rincian prediksi, log *real-time*, dan ekspor CSV sekali klik.
+- **GUI Asli yang Ringan & Responsif**: Dibangun dengan `tkinter` dan `ttk` murni tanpa dependensi UI eksternal yang berat, serta menggunakan *background daemon thread* (*non-blocking*) sehingga antarmuka tidak membeku saat komputasi berlangsung.
+- **Analisis Variabel Opsional (SHAP & Learning Curve)**: Mendukung interpretabilitas fitur dengan `shap.TreeExplainer` dan evaluasi kurva pembelajaran menggunakan `TimeSeriesSplit` melalui kotak centang pada panel **Pengaturan**.
+- **Riwayat & Ekspor Data**: Menyimpan riwayat peramalan secara lokal (`forecast_history.json`) untuk dimuat ulang kapan saja, serta mendukung ekspor hasil proyeksi ke CSV (`prediksi_<ticker>_<timestamp>.csv`) sekali klik.
 - **Cakupan Aset Global**: Mendukung seluruh instrumen yang tersedia di Yahoo Finance—saham domestik (`BBCA.JK`), saham global (`AAPL`), indeks (`^JKSE`), komoditas (`GC=F`), hingga kripto (`BTC-USD`).
 
 ---
 
-## Pratinjau Antarmuka
+## Pratinjau Aplikasi
 
-### 1. Edisi Terminal CLI
-Antarmuka baris perintah yang interaktif, ringan, dan terstruktur langsung dari terminal:
-
-<div align="center">
-  <img src="assets/cli_preview_v2.png" alt="Tampilan CLI Yahoo Finance Forecaster" width="850"/>
-</div>
-
-<br/>
-
-### 2. Edisi Desktop GUI (v1.0.0)
 Aplikasi desktop modern dengan kontrol parameter, preset rentang tanggal instan, profil emiten otomatis, metrik evaluasi (MAPE & MAE), serta grafik proyeksi resolusi tinggi:
 
 <div align="center">
@@ -77,19 +68,33 @@ Aplikasi desktop modern dengan kontrol parameter, preset rentang tanggal instan,
 
 ---
 
-## Perbandingan Edisi
+## Rincian Tab Aplikasi
 
-| Fitur | Edisi CLI | Edisi GUI |
-|---|:---:|:---:|
-| **Antarmuka** | Baris Perintah (*Terminal*) | Antarmuka Grafis Desktop (*GUI*) |
-| **Teknologi** | Python Murni + Format ANSI | Tkinter + TTK + Matplotlib Canvas |
-| **Visualisasi** | Jendela Pop-up HD Matplotlib | Kanvas Tersemat + Pop-up HD |
-| **Ekspor Data** | Tabel ASCII Terminal | Ekspor CSV Sekali Klik (`prediksi_<ticker>_<timestamp>.csv`) |
-| **Mode Eksekusi** | Sinkron (*Synchronous*) | *Multi-Threading* Latar Belakang (*Non-Blocking*) |
-| **Kemudahan Input** | Validasi Interaktif + Format `YY-MM-DD` / `YYYY-MM-DD` | Tombol *Preset* (1–5 Tahun) + *Auto-Uppercase* Ticker |
-| **Info Emiten & Log** | Ringkasan Progres Terminal | Deteksi Sektor/Industri + Log Berpenanda Waktu |
-| **Dokumentasi Bawaan** | Flag `--version` / `-v` & Panduan Terminal | Tab Tutorial Terintegrasi di Dalam Aplikasi |
-| **Direktori** | [`Yahoo Finance Forecaster CLI`](Yahoo%20Finance%20Forecaster%20CLI) | [`Yahoo Finance Forecaster GUI`](Yahoo%20Finance%20Forecaster%20GUI) |
+Seluruh hasil analisis dan panduan dikelompokkan ke dalam enam tab terstruktur:
+
+```text
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ Grafik Prediksi │ Tabel Rincian Prediksi │ Analisis Variabel │ Log Komputasi │ Riwayat │ Tutorial │
+└──────────────────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+1. **Grafik Prediksi**:
+   - Kanvas Matplotlib terintegrasi dengan dua grafik tersinkronisasi:
+     - **Grafik Atas**: Evaluasi Model (*Data Latih vs. Data Uji vs. Prediksi Validasi*).
+     - **Grafik Bawah**: Hasil Peramalan Akhir (*Data Historis Penuh vs. Proyeksi Multi-Langkah*).
+   - Dilengkapi toolbar interaktif Matplotlib (Pan, Zoom, Konfigurasi Subplot, Simpan Gambar) dan tombol **Tampilkan Jendela Pop-up HD**.
+2. **Tabel Rincian Prediksi**:
+   - Tabel terstruktur berisi nomor urut, tanggal proyeksi, estimasi harga prediksi, selisih nominal, dan persentase perubahan terhadap harga penutupan terakhir.
+   - Dilengkapi tombol **Ekspor Hasil ke CSV**.
+3. **Analisis Variabel**:
+   - Menampilkan grafik **SHAP Feature Importance & Summary Impact** (via `TreeExplainer`) dan/atau **Learning Curve** (via `TimeSeriesSplit` cross-validation) sesuai pengaturan yang diaktifkan.
+   - Dilengkapi tombol pop-up HD untuk inspeksi grafik lebih detail.
+4. **Log Komputasi**:
+   - Aliran log teknis berpenanda waktu (*timestamp*) secara *real-time* yang merinci proses unduh data, pemisahan sampel, dan metrik evaluasi model (MAE & MAPE).
+5. **Riwayat**:
+   - Menyimpan riwayat peramalan yang pernah dijalankan secara otomatis ke `forecast_history.json` lengkap dengan fitur pencarian, muat ulang hasil, pakai ulang parameter, dan hapus riwayat.
+6. **Tutorial**:
+   - Panduan singkat bawaan yang menjelaskan langkah-langkah penggunaan aplikasi dari awal hingga akhir.
 
 ---
 
@@ -99,7 +104,7 @@ Aplikasi desktop modern dengan kontrol parameter, preset rentang tanggal instan,
 - **Python 3.9+** (teruji pada Python 3.9 hingga 3.13).
 - Koneksi internet aktif untuk mengunduh data pasar dari Yahoo Finance.
 
-### 2. Kloning Repositori & Menyiapkan Virtual Environment
+### 2. Kloning Repositori & Instalasi Dependensi
 
 ```bash
 git clone https://github.com/Cahyo-Wisanggeni/Yahoo-Finance-Forecaster.git
@@ -113,48 +118,39 @@ venv\Scripts\activate
 
 # Linux / macOS
 source venv/bin/activate
+
+# Pasang seluruh paket dependensi
+pip install -r requirements.txt
 ```
 
 ### 3. Menjalankan Aplikasi
 
-**Edisi Terminal (CLI):**
-
+#### Melalui Terminal (Windows / Linux / macOS):
 ```bash
-cd "Yahoo Finance Forecaster CLI"
-pip install -r requirements.txt
-python main.py
-```
-
-**Edisi Desktop (GUI):**
-
-```bash
-cd "Yahoo Finance Forecaster GUI"
-pip install -r requirements.txt
 python app.py
+
+# Memeriksa versi yang terpasang:
+python app.py --version
 ```
 
-> **Pengguna Windows:** Pada folder `Yahoo Finance Forecaster GUI`, Anda juga dapat mengklik dua kali `run_gui.bat` (atau `run_gui_debug.bat` untuk melihat log konsol) setelah dependensi terpasang.
-
-Verifikasi instalasi kapan saja dengan memeriksa versi aplikasi:
-
-```bash
-python main.py --version   # Output: Yahoo Finance Forecaster CLI v1.0.0
-python app.py --version    # Output: Yahoo Finance Forecaster GUI v1.0.0
-```
+#### Pada Windows (Sekali Klik):
+- **Mode Standar (Tanpa Konsol)**: Klik dua kali berkas `run_gui.bat`.
+- **Mode Debug (Dengan Output Konsol)**: Klik dua kali berkas `run_gui_debug.bat`.
 
 ---
 
 ## Parameter & Contoh Penggunaan
 
-Saat menjalankan aplikasi, Anda cukup memasukkan lima parameter utama berikut:
+Saat menjalankan aplikasi, masukkan lima parameter utama berikut (serta opsi analisis tambahan jika diperlukan):
 
 | Parameter | Format / Pilihan | Keterangan |
 |---|---|---|
-| **Ticker** | Kode Yahoo Finance | Contoh: `BBCA.JK`, `AAPL`, `^JKSE`, `BTC-USD` |
-| **Tanggal Mulai** | `YYYY-MM-DD` atau `YY-MM-DD` | Awal rentang data historis (mis. `2023-01-01` atau `23-01-01`) |
-| **Tanggal Akhir** | `YYYY-MM-DD` atau `YY-MM-DD` | Batas akhir data historis yang diunduh |
-| **Frekuensi Data** | `B` atau `D` | `B` (*Business Days* / hari bursa) untuk saham, `D` (*Calendar Days*) untuk aset 24/7 seperti kripto |
-| **Horizon Prediksi** | Bilangan bulat (`steps`) | Jumlah periode langkah ke depan yang ingin diproyeksikan (mis. `14` atau `30`) |
+| **Ticker** | Kode Yahoo Finance | Contoh: `BBCA.JK`, `AAPL`, `^JKSE`, `BTC-USD` (*auto-uppercase*) |
+| **Tanggal Mulai** | `YYYY-MM-DD` | Awal rentang data historis (atau pilih *preset* 1–5 Tahun) |
+| **Tanggal Selesai** | `YYYY-MM-DD` | Batas akhir data historis yang diunduh |
+| **Frekuensi Data** | `B` atau `D` | `B` (*Business Days*) untuk saham/indeks, `D` (*Days*) untuk aset 24/7 seperti kripto |
+| **Periode Prediksi** | Bilangan bulat (`1–365`) | Jumlah langkah ke depan yang ingin diproyeksikan (mis. `14` atau `30`) |
+| **Pengaturan (Opsional)** | `SHAP analysis`, `Learning Curve` | Mengaktifkan kalkulasi dan visualisasi pada tab **Analisis Variabel** |
 
 <details>
 <summary><b>Klik untuk melihat contoh daftar ticker populer &amp; frekuensi yang disarankan</b></summary>
@@ -171,19 +167,28 @@ Saat menjalankan aplikasi, Anda cukup memasukkan lima parameter utama berikut:
 
 ---
 
-## Arsitektur Machine Learning
-
-Kedua edisi berbagi jalur pemrosesan dan pemodelan yang identik untuk memastikan konsistensi hasil:
+## Arsitektur Machine Learning & Multi-Threading
 
 ```mermaid
-flowchart LR
-    A[Yahoo Finance API] --> B[Pembersihan Data & Resampling AsFreq]
-    B --> C[Feature Engineering: 10 Lags + 10 Rolling Means]
-    C --> D[Diferensiasi Ordo 1]
-    D --> E[ForecasterDirect + RandomForest 100 Trees]
-    E --> F[Validasi 80/20: MAE & MAPE]
-    E --> G[Proyeksi Out-of-Sample: N Steps]
-    G --> H[Grafik Evaluasi, Tabel & Ekspor CSV]
+flowchart TD
+    subgraph UI ["Main GUI Thread (Tkinter Event Loop)"]
+        A[Parameter Pengguna & Pengaturan Opsional]
+        B[Pembaruan Progress Bar & Status]
+        C[Render Grafik, Tabel, Analisis Variabel, Log & Riwayat]
+    end
+
+    subgraph Worker ["Background Daemon Thread"]
+        D[Unduh Data Historis Yahoo Finance & Resampling AsFreq]
+        E[Rekayasa 20 Fitur: 10 Lags + 10 Rolling Means + Diferensiasi Ordo 1]
+        F[Validasi 80/20: ForecasterDirect + RandomForest 100 Trees]
+        G[Model Final 100% Data & Proyeksi Out-of-Sample N Steps]
+        H[Opsional: SHAP TreeExplainer & TimeSeriesSplit Learning Curve]
+    end
+
+    A -->|Tombol Mulai Peramalan| Worker
+    D --> E --> F --> G --> H
+    Worker -->|Pembaruan UI via after| UI
+    UI --> C
 ```
 
 | Komponen | Spesifikasi |
@@ -194,53 +199,35 @@ flowchart LR
 | **Fitur Rolling Window** | `roll_mean_1` hingga `roll_mean_10` (10 fitur) |
 | **Total Prediktor** | 20 fitur deret waktu dengan diferensiasi ordo 1 |
 | **Metrik Evaluasi** | MAE (*Mean Absolute Error*) & MAPE (*Mean Absolute Percentage Error*) |
+| **Analisis Variabel** | `shap.TreeExplainer` (maks. 200 sampel akhir) & `learning_curve` (`TimeSeriesSplit`) |
 
 ---
 
 ## Struktur Repositori
 
-<details>
-<summary><b>Klik untuk melihat susunan lengkap direktori dan berkas proyek</b></summary>
-
 ```text
 Yahoo-Finance-Forecaster/
-├── .gitignore                          # Aturan abaikan Git global
-├── CHANGELOG.md                        # Catatan perubahan dan riwayat versi
-├── LICENSE                             # Lisensi MIT
-├── README.md                           # Dokumentasi utama proyek
-├── assets/                             # Aset logo & tangkapan layar utama
-│   ├── logo_v2.png
-│   ├── cli_preview_v2.png
-│   └── gui_preview_v2.png
-│
-├── Yahoo Finance Forecaster CLI/       # Edisi Terminal (CLI)
-│   ├── assets/
-│   ├── .gitignore
-│   ├── CONTRIBUTING.md
-│   ├── LICENSE
-│   ├── README.md
-│   ├── requirements.txt
-│   └── main.py
-│
-└── Yahoo Finance Forecaster GUI/       # Edisi Grafis Desktop (GUI)
-    ├── assets/
-    ├── .gitignore
-    ├── CONTRIBUTING.md
-    ├── LICENSE
-    ├── README.md
-    ├── requirements.txt
-    ├── run_gui.bat
-    ├── run_gui_debug.bat
-    └── app.py
+├── .gitignore             # Aturan pengabaian Git
+├── CHANGELOG.md           # Catatan perubahan dan riwayat versi
+├── CONTRIBUTING.md        # Panduan kontribusi pengembangan
+├── LICENSE                # Lisensi MIT
+├── README.md              # Dokumentasi utama proyek
+├── requirements.txt       # Daftar dependensi Python
+├── app.py                 # Kode sumber utama aplikasi desktop GUI
+├── run_gui.bat            # Peluncur senyap 1-klik di Windows
+├── run_gui_debug.bat      # Peluncur mode konsol di Windows
+└── assets/                # Aset logo & tangkapan layar aplikasi
+    ├── logo.png
+    ├── logo_v2.png
+    ├── gui_preview.png
+    └── gui_preview_v2.png
 ```
-
-</details>
 
 ---
 
 ## Kontribusi & Catatan Perubahan
 
-- **Kontribusi**: Panduan kontribusi tersedia pada masing-masing direktori edisi ([CLI CONTRIBUTING](Yahoo%20Finance%20Forecaster%20CLI/CONTRIBUTING.md) · [GUI CONTRIBUTING](Yahoo%20Finance%20Forecaster%20GUI/CONTRIBUTING.md)).
+- **Kontribusi**: Panduan kontribusi tersedia di [CONTRIBUTING.md](CONTRIBUTING.md).
 - **Riwayat Rilis**: Seluruh pembaruan fitur dan perbaikan terdokumentasi di [CHANGELOG.md](CHANGELOG.md).
 
 > **Catatan:** Seluruh hasil peramalan dihasilkan secara matematis dari data historis untuk keperluan edukasi, riset, dan analisis teknis, bukan merupakan rekomendasi atau saran investasi finansial.
