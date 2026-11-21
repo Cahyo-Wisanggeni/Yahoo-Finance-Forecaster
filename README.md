@@ -48,13 +48,26 @@
 
 ## Keunggulan & Fitur Utama
 
-- **Peramalan Multi-Langkah Bebas Akumulasi Galat**: Menggunakan strategi `ForecasterDirect` dari `skforecast` yang melatih estimator khusus untuk setiap langkah horizon ke depan, dipadukan dengan `RandomForestRegressor` (100 *decision trees*).
-- **20 Fitur Rekayasa Otomatis**: Menggabungkan 10 variabel lag autoregresif (`lag_1`–`lag_10`), 10 *rolling window means* (`roll_mean_1`–`roll_mean_10`), serta diferensiasi ordo pertama agar deret harga stasioner sebelum pelatihan.
-- **Evaluasi Model Transparan**: Pemisahan data latih dan uji (80/20) secara otomatis menghitung metrik **MAE** (*Mean Absolute Error*) dan **MAPE** (*Mean Absolute Percentage Error*) sebelum menghasilkan proyeksi *out-of-sample*.
-- **GUI Asli yang Ringan & Responsif**: Dibangun dengan `tkinter` dan `ttk` murni tanpa dependensi UI eksternal yang berat, serta menggunakan *background daemon thread* (*non-blocking*) sehingga antarmuka tidak membeku saat komputasi berlangsung.
-- **Analisis Variabel Opsional (SHAP & Learning Curve)**: Mendukung interpretabilitas fitur dengan `shap.TreeExplainer` dan evaluasi kurva pembelajaran menggunakan `TimeSeriesSplit` melalui kotak centang pada panel **Pengaturan**.
-- **Riwayat & Ekspor Data**: Menyimpan riwayat peramalan secara lokal (`forecast_history.json`) untuk dimuat ulang kapan saja, serta mendukung ekspor hasil proyeksi ke CSV (`prediksi_<ticker>_<timestamp>.csv`) sekali klik.
-- **Cakupan Aset Global**: Mendukung seluruh instrumen yang tersedia di Yahoo Finance—saham domestik (`BBCA.JK`), saham global (`AAPL`), indeks (`^JKSE`), komoditas (`GC=F`), hingga kripto (`BTC-USD`).
+**Peramalan Multi-Langkah Tanpa Akumulasi Galat**<br>
+Menggunakan `ForecasterDirect` (`skforecast`) dan `RandomForestRegressor` (100 *trees*) untuk melatih estimator terpisah pada setiap langkah horizon.
+
+**20 Fitur Rekayasa Otomatis**<br>
+Membentuk 10 fitur lag (`lag_1`–`lag_10`), 10 *rolling mean* (`roll_mean_1`–`roll_mean_10`), serta diferensiasi orde pertama agar deret harga stasioner.
+
+**Evaluasi Model Transparan**<br>
+Memisahkan data latih dan uji (80/20) lalu menghitung MAE dan MAPE secara otomatis sebelum proyeksi *out-of-sample*.
+
+**GUI Ringan & Responsif**<br>
+Dibangun dengan `tkinter`/`ttk` tanpa dependensi UI berat, serta berjalan di *background thread* agar antarmuka tidak membeku saat komputasi.
+
+**Analisis SHAP & Learning Curve (Opsional)**<br>
+Mendukung interpretabilitas fitur dengan `shap.TreeExplainer` dan evaluasi kurva pembelajaran lewat `TimeSeriesSplit` dari panel Pengaturan.
+
+**Riwayat & Ekspor Data**<br>
+Menyimpan riwayat peramalan secara lokal (`forecast_history.json`) dan mendukung ekspor hasil proyeksi ke CSV sekali klik.
+
+**Cakupan Aset Global**<br>
+Mendukung seluruh instrumen di Yahoo Finance: saham domestik (`BBCA.JK`), global (`AAPL`), indeks (`^JKSE`), komoditas (`GC=F`), hingga kripto (`BTC-USD`).
 
 ---
 
