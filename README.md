@@ -24,8 +24,7 @@
     <a href="#pratinjau-aplikasi">Pratinjau</a> &middot;
     <a href="#fitur-utama">Fitur Utama</a> &middot;
     <a href="#rincian-tab-aplikasi">Tab Aplikasi</a> &middot;
-    <a href="#panduan-memulai-cepat">Panduan Memulai</a> &middot;
-    <a href="CHANGELOG.md">Catatan Perubahan</a>
+    <a href="#panduan-memulai-cepat">Panduan Memulai</a>
   </p>
 
 </div>
@@ -220,8 +219,6 @@ flowchart TD
 ```text
 Yahoo-Finance-Forecaster/
 ├── .gitignore             # Aturan pengabaian Git
-├── CHANGELOG.md           # Catatan perubahan dan riwayat versi
-├── CONTRIBUTING.md        # Panduan kontribusi pengembangan
 ├── LICENSE                # Lisensi MIT
 ├── README.md              # Dokumentasi utama proyek
 ├── requirements.txt       # Daftar dependensi Python
