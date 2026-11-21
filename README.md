@@ -29,6 +29,12 @@
 
 </div>
 
+<br/>
+
+<div align="center">
+  <img src="assets/demo.webp" alt="Demo Yahoo Finance Forecaster" width="950"/>
+</div>
+
 ---
 
 ## Daftar Isi
@@ -76,10 +82,6 @@ Aplikasi desktop modern dengan kontrol parameter, preset rentang tanggal instan,
 <div align="center">
   <img src="assets/gui_preview_v2.png" alt="Tampilan GUI Yahoo Finance Forecaster" width="950"/>
 </div>
-
-### Video Demo
-
-https://github.com/user-attachments/assets/d6376531-a306-448b-afb2-3e2dc2c1bdf0
 
 ---
 
@@ -229,7 +231,8 @@ Yahoo-Finance-Forecaster/
 ├── app.py                 # Kode sumber utama aplikasi desktop GUI
 ├── run_gui.bat            # Peluncur senyap 1-klik di Windows
 ├── run_gui_debug.bat      # Peluncur mode konsol di Windows
-└── assets/                # Aset logo & tangkapan layar aplikasi
+└── assets/                # Aset logo, demo animasi & tangkapan layar aplikasi
+    ├── demo.webp
     ├── logo.png
     ├── logo_v2.png
     ├── gui_preview.png
