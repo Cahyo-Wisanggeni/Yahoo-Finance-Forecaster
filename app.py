@@ -87,7 +87,7 @@ class YahooForecasterGUI(tk.Tk):
         self.style.configure("Muted.TLabel", background=self.colors["card_bg"], foreground=self.colors["text_muted"], font=("Segoe UI", 8))
         self.style.configure("MetricVal.TLabel", background=self.colors["card_bg"], foreground=self.colors["primary"], font=("Segoe UI", 13, "bold"))
 
-        self.style.configure("Primary.TButton", background=self.colors["primary"], foreground="#FFFFFF", font=("Segoe UI", 10, "bold"), padding=6)
+        self.style.configure("Primary.TButton", background=self.colors["primary"], foreground="#FFFFFF", font=("Segoe UI", 10, "bold"), padding=6, anchor="center", justify="center")
         self.style.map("Primary.TButton",
             background=[("active", self.colors["primary_light"]), ("disabled", "#CBD5E1")],
             foreground=[("disabled", "#94A3B8")]
@@ -226,11 +226,17 @@ class YahooForecasterGUI(tk.Tk):
         params_grid.columnconfigure(0, weight=1)
         params_grid.columnconfigure(1, weight=1)
 
-        settings_box = tk.Frame(cfg_inner, bg="#F8FAFC", bd=1, relief="solid")
-        settings_box.pack(fill=tk.X, pady=(2, 6))
+        action_row = tk.Frame(cfg_inner, bg=self.colors["card_bg"])
+        action_row.pack(fill=tk.X, pady=(4, 4))
+        action_row.columnconfigure(0, weight=1, uniform="action_cols")
+        action_row.columnconfigure(1, weight=1, uniform="action_cols")
+        action_row.rowconfigure(0, weight=1)
+
+        settings_box = tk.Frame(action_row, bg="#F8FAFC", bd=1, relief="solid")
+        settings_box.grid(row=0, column=0, sticky="nsew", padx=(0, 4))
 
         settings_inner = tk.Frame(settings_box, bg="#F8FAFC")
-        settings_inner.pack(fill=tk.X, padx=10, pady=(5, 7))
+        settings_inner.pack(fill=tk.BOTH, expand=True, padx=8, pady=(5, 6))
 
         lbl_settings = tk.Label(
             settings_inner,
@@ -241,20 +247,17 @@ class YahooForecasterGUI(tk.Tk):
         )
         lbl_settings.pack(anchor="w", pady=(0, 3))
 
-        chk_row = tk.Frame(settings_inner, bg="#F8FAFC")
-        chk_row.pack(fill=tk.X)
-
         self.var_use_shap = tk.BooleanVar(self, value=False)
         self.var_use_lc = tk.BooleanVar(self, value=False)
 
-        self.chk_shap = ttk.Checkbutton(chk_row, text="SHAP analysis", variable=self.var_use_shap, style="Settings.TCheckbutton")
-        self.chk_shap.pack(side=tk.LEFT, padx=(0, 14))
+        self.chk_shap = ttk.Checkbutton(settings_inner, text="SHAP analysis", variable=self.var_use_shap, style="Settings.TCheckbutton")
+        self.chk_shap.pack(anchor="w", pady=(0, 1))
 
-        self.chk_lc = ttk.Checkbutton(chk_row, text="Learning Curve", variable=self.var_use_lc, style="Settings.TCheckbutton")
-        self.chk_lc.pack(side=tk.LEFT)
+        self.chk_lc = ttk.Checkbutton(settings_inner, text="Learning Curve", variable=self.var_use_lc, style="Settings.TCheckbutton")
+        self.chk_lc.pack(anchor="w")
 
-        self.btn_run = ttk.Button(cfg_inner, text="🚀 MULAI PERAMALAN", style="Primary.TButton", command=self._action_start_forecast)
-        self.btn_run.pack(fill=tk.X, pady=(4, 4))
+        self.btn_run = ttk.Button(action_row, text="🚀 MULAI\nPERAMALAN", style="Primary.TButton", command=self._action_start_forecast)
+        self.btn_run.grid(row=0, column=1, sticky="nsew", padx=(4, 0))
 
         self.pbar = ttk.Progressbar(cfg_inner, style="Horizontal.TProgressbar", mode="determinate")
         self.pbar.pack(fill=tk.X, pady=(6, 2))
