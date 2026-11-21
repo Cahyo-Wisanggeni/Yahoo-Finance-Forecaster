@@ -41,7 +41,6 @@
 - [Parameter & Contoh Penggunaan](#parameter--contoh-penggunaan)
 - [Arsitektur Machine Learning & Multi-Threading](#arsitektur-machine-learning--multi-threading)
 - [Struktur Repositori](#struktur-repositori)
-- [Kontribusi & Catatan Perubahan](#kontribusi--catatan-perubahan)
 - [Lisensi](#lisensi)
 
 ---
@@ -235,15 +234,6 @@ Yahoo-Finance-Forecaster/
     ├── gui_preview.png
     └── gui_preview_v2.png
 ```
-
----
-
-## Kontribusi & Catatan Perubahan
-
-- **Kontribusi**: Panduan kontribusi tersedia di [CONTRIBUTING.md](CONTRIBUTING.md).
-- **Riwayat Rilis**: Seluruh pembaruan fitur dan perbaikan terdokumentasi di [CHANGELOG.md](CHANGELOG.md).
-
-> **Catatan:** Seluruh hasil peramalan dihasilkan secara matematis dari data historis untuk keperluan edukasi, riset, dan analisis teknis, bukan merupakan rekomendasi atau saran investasi finansial.
 
 ---
 
