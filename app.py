@@ -70,7 +70,17 @@ class YahooForecasterGUI(tk.Tk):
 
         self._configure_styles()
         self._build_ui()
+        self._maximize_window()
         self.protocol("WM_DELETE_WINDOW", self._on_close)
+
+    def _maximize_window(self):
+        try:
+            self.state("zoomed")
+        except tk.TclError:
+            try:
+                self.attributes("-zoomed", True)
+            except tk.TclError:
+                pass
 
     def _configure_styles(self):
         self.style = ttk.Style(self)
