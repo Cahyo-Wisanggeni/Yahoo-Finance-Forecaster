@@ -224,14 +224,14 @@ flowchart TD
 
 ```text
 Yahoo-Finance-Forecaster/
-├── .gitignore             # Aturan pengabaian Git
-├── LICENSE                # Lisensi MIT
-├── README.md              # Dokumentasi utama proyek
-├── requirements.txt       # Daftar dependensi Python
-├── app.py                 # Kode sumber utama aplikasi desktop GUI
-├── run_gui.bat            # Peluncur senyap 1-klik di Windows
-├── run_gui_debug.bat      # Peluncur mode konsol di Windows
-└── assets/                # Aset logo, demo animasi & tangkapan layar aplikasi
+├── .gitignore
+├── LICENSE
+├── README.md
+├── requirements.txt
+├── app.py
+├── run_gui.bat
+├── run_gui_debug.bat
+└── assets/
     ├── demo.webp
     ├── logo.png
     ├── logo_v2.png
