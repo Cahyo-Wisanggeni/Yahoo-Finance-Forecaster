@@ -77,6 +77,10 @@ Aplikasi desktop modern dengan kontrol parameter, preset rentang tanggal instan,
   <img src="assets/gui_preview_v2.png" alt="Tampilan GUI Yahoo Finance Forecaster" width="950"/>
 </div>
 
+### Video Demo
+
+https://github.com/user-attachments/assets/d6376531-a306-448b-afb2-3e2dc2c1bdf0
+
 ---
 
 ## Rincian Tab Aplikasi
