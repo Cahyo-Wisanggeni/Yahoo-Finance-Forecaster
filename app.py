@@ -43,7 +43,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 class YahooForecasterGUI(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title(f"Yahoo Finance Forecaster - GUI Edition v{__version__}")
+        self.title("Yahoo Finance Forecaster")
         self.geometry("1280x820")
         self.minsize(1050, 700)
 
@@ -105,8 +105,14 @@ class YahooForecasterGUI(tk.Tk):
             foreground=[("disabled", "#94A3B8")]
         )
 
-        self.style.configure("Settings.TCheckbutton", background="#F8FAFC", foreground=self.colors["text"], font=("Segoe UI", 9))
-        self.style.map("Settings.TCheckbutton", background=[("active", "#F8FAFC")])
+        self.style.configure("Settings.TCheckbutton", background="#FFFFFF", foreground=self.colors["text"], font=("Segoe UI", 9, "bold"))
+        self.style.map("Settings.TCheckbutton", background=[("active", "#FFFFFF")])
+
+        self.style.configure("SettingsBtn.TButton", background="#EDE9FE", foreground=self.colors["primary_dark"], font=("Segoe UI", 10, "bold"), padding=6)
+        self.style.map("SettingsBtn.TButton",
+            background=[("active", "#DDD6FE"), ("disabled", "#F1F5F9")],
+            foreground=[("disabled", "#94A3B8")]
+        )
 
         self.style.configure("TNotebook", background=self.colors["bg"], tabmargins=[2, 5, 2, 0])
         self.style.configure("TNotebook.Tab", background="#E2E8F0", foreground="#475569", padding=[15, 6], font=("Segoe UI", 9, "bold"))
@@ -133,23 +139,15 @@ class YahooForecasterGUI(tk.Tk):
         self.style.map("Treeview", background=[("selected", "#EDE9FE")], foreground=[("selected", self.colors["primary_dark"])])
 
     def _build_ui(self):
-        header_frame = tk.Frame(self, bg=self.colors["primary"], height=80)
+        header_frame = tk.Frame(self, bg=self.colors["primary"], height=58)
         header_frame.pack(side=tk.TOP, fill=tk.X)
         header_frame.pack_propagate(False)
 
         header_content = tk.Frame(header_frame, bg=self.colors["primary"])
-        header_content.pack(side=tk.LEFT, fill=tk.Y, padx=22, pady=(12, 10))
+        header_content.pack(side=tk.LEFT, padx=22)
 
         lbl_title = ttk.Label(header_content, text="Yahoo! Finance Forecaster", style="Header.TLabel")
         lbl_title.pack(anchor="w")
-
-        lbl_subtitle = ttk.Label(header_content, text="Peramalan Deret Waktu Pasar Keuangan Berbasis Machine Learning", style="HeaderSub.TLabel")
-        lbl_subtitle.pack(anchor="w", pady=(3, 0))
-
-        badge_frame = tk.Frame(header_frame, bg=self.colors["primary"])
-        badge_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=22, pady=22)
-        lbl_version = tk.Label(badge_frame, text=f"EDISI GUI v{__version__}", bg=self.colors["primary_dark"], fg="#A7F3D0", font=("Segoe UI", 8, "bold"), padx=10, pady=4)
-        lbl_version.pack()
 
         main_container = ttk.Frame(self)
         main_container.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=14, pady=12)
@@ -226,41 +224,19 @@ class YahooForecasterGUI(tk.Tk):
         params_grid.columnconfigure(0, weight=1)
         params_grid.columnconfigure(1, weight=1)
 
-        settings_box = tk.Frame(cfg_inner, bg="#F8FAFC", bd=1, relief="solid")
-        settings_box.pack(fill=tk.X, pady=(2, 6))
-
-        settings_inner = tk.Frame(settings_box, bg="#F8FAFC")
-        settings_inner.pack(fill=tk.X, padx=10, pady=(5, 7))
-
-        lbl_settings = tk.Label(
-            settings_inner,
-            text="⚙️ Pengaturan",
-            bg="#F8FAFC",
-            fg=self.colors["primary_dark"],
-            font=("Segoe UI", 9, "bold")
-        )
-        lbl_settings.pack(anchor="w", pady=(0, 3))
-
-        chk_row = tk.Frame(settings_inner, bg="#F8FAFC")
-        chk_row.pack(fill=tk.X)
-
         self.var_use_shap = tk.BooleanVar(self, value=False)
         self.var_use_lc = tk.BooleanVar(self, value=False)
+        self.var_use_shap.trace_add("write", self._update_settings_btn_text)
+        self.var_use_lc.trace_add("write", self._update_settings_btn_text)
 
-        self.chk_shap = ttk.Checkbutton(chk_row, text="SHAP analysis", variable=self.var_use_shap, style="Settings.TCheckbutton")
-        self.chk_shap.pack(side=tk.LEFT, padx=(0, 14))
-
-        self.chk_lc = ttk.Checkbutton(chk_row, text="Learning Curve", variable=self.var_use_lc, style="Settings.TCheckbutton")
-        self.chk_lc.pack(side=tk.LEFT)
+        self.btn_settings = ttk.Button(cfg_inner, text="⚙️ PENGATURAN", style="SettingsBtn.TButton", command=self._open_settings_dialog)
+        self.btn_settings.pack(fill=tk.X, pady=(4, 4))
 
         self.btn_run = ttk.Button(cfg_inner, text="🚀 MULAI PERAMALAN", style="Primary.TButton", command=self._action_start_forecast)
-        self.btn_run.pack(fill=tk.X, pady=(4, 4))
+        self.btn_run.pack(fill=tk.X, pady=(2, 4))
 
         self.pbar = ttk.Progressbar(cfg_inner, style="Horizontal.TProgressbar", mode="determinate")
         self.pbar.pack(fill=tk.X, pady=(6, 2))
-
-        self.lbl_status = tk.Label(cfg_inner, text="Siap menjalankan peramalan.", bg=self.colors["card_bg"], fg=self.colors["text_muted"], font=("Segoe UI", 8), anchor="w")
-        self.lbl_status.pack(fill=tk.X)
 
         card_info = tk.Frame(left_sidebar, bg=self.colors["card_bg"], bd=1, relief="solid", highlightbackground=self.colors["border"])
         card_info.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
@@ -311,9 +287,6 @@ class YahooForecasterGUI(tk.Tk):
         self.lbl_mae = tk.Label(m_inner, text="-", bg="#F8FAFC", font=("Segoe UI", 11, "bold"), fg="#0D9488")
         self.lbl_mae.pack(anchor="w")
 
-        self.lbl_hyperparams = tk.Label(self.info_container, text="Model: ForecasterDirect (10 Lags, 10 Roll Mean, 100 Trees)", bg=self.colors["card_bg"], font=("Segoe UI", 8), fg=self.colors["text_muted"], anchor="w", wraplength=310, justify="left")
-        self.lbl_hyperparams.pack(fill=tk.X, pady=(3, 0))
-
         right_container = ttk.Frame(main_container)
         right_container.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
@@ -348,9 +321,6 @@ class YahooForecasterGUI(tk.Tk):
     def _setup_chart_tab(self):
         chart_top_bar = tk.Frame(self.tab_charts, bg=self.colors["bg"])
         chart_top_bar.pack(side=tk.TOP, fill=tk.X, pady=(6, 4), padx=6)
-
-        lbl_chart_hint = tk.Label(chart_top_bar, text="📈 Visualisasi Evaluasi Model & Hasil Proyeksi Masa Depan", bg=self.colors["bg"], font=("Segoe UI", 9, "bold"), fg=self.colors["primary_dark"])
-        lbl_chart_hint.pack(side=tk.LEFT, pady=2)
 
         btn_popup_chart = ttk.Button(chart_top_bar, text="🖥️ Tampilkan Jendela Pop-up HD", style="Accent.TButton", command=self._action_popup_chart)
         btn_popup_chart.pack(side=tk.RIGHT, padx=4)
@@ -391,9 +361,6 @@ class YahooForecasterGUI(tk.Tk):
         tbl_top_bar = tk.Frame(self.tab_table, bg=self.colors["bg"])
         tbl_top_bar.pack(side=tk.TOP, fill=tk.X, pady=(6, 6), padx=6)
 
-        lbl_tbl_title = tk.Label(tbl_top_bar, text="Tabel Proyeksi Harga Saham", bg=self.colors["bg"], font=("Segoe UI", 10, "bold"), fg=self.colors["primary_dark"])
-        lbl_tbl_title.pack(side=tk.LEFT, pady=2)
-
         btn_export = ttk.Button(tbl_top_bar, text="💾 Ekspor Hasil ke CSV", style="Primary.TButton", command=self._action_export_csv)
         btn_export.pack(side=tk.RIGHT, padx=4)
 
@@ -430,27 +397,6 @@ class YahooForecasterGUI(tk.Tk):
         var_top_bar = tk.Frame(self.tab_var_analysis, bg=self.colors["bg"])
         var_top_bar.pack(side=tk.TOP, fill=tk.X, pady=(6, 4), padx=6)
 
-        title_wrap = tk.Frame(var_top_bar, bg=self.colors["bg"])
-        title_wrap.pack(side=tk.LEFT, pady=2)
-
-        lbl_var_title = tk.Label(
-            title_wrap,
-            text="🔬 Analisis Variabel (SHAP & Learning Curve)",
-            bg=self.colors["bg"],
-            font=("Segoe UI", 9, "bold"),
-            fg=self.colors["primary_dark"]
-        )
-        lbl_var_title.pack(side=tk.LEFT)
-
-        self.lbl_var_status = tk.Label(
-            title_wrap,
-            text="• Belum ada analisis aktif",
-            bg=self.colors["bg"],
-            font=("Segoe UI", 8),
-            fg=self.colors["text_muted"]
-        )
-        self.lbl_var_status.pack(side=tk.LEFT, padx=(8, 0))
-
         btn_popup_var = ttk.Button(
             var_top_bar,
             text="🖥️ Tampilkan Jendela Pop-up HD",
@@ -459,21 +405,44 @@ class YahooForecasterGUI(tk.Tk):
         )
         btn_popup_var.pack(side=tk.RIGHT, padx=4)
 
-        self.var_fig = plt.figure(figsize=(9.5, 6.5), facecolor="white")
+        self.var_fig = plt.figure(figsize=(9.2, 5.5), facecolor="white")
         self._init_empty_var_chart(self.var_fig)
 
         self.var_canvas_frame = tk.Frame(self.tab_var_analysis, bg="#FFFFFF", bd=1, relief="solid")
         self.var_canvas_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=6, pady=(0, 6))
 
-        self.var_canvas = FigureCanvasTkAgg(self.var_fig, master=self.var_canvas_frame)
+        self.var_scroll_canvas = tk.Canvas(self.var_canvas_frame, bg="#FFFFFF", highlightthickness=0)
+        var_vscroll = ttk.Scrollbar(self.var_canvas_frame, orient="vertical", command=self.var_scroll_canvas.yview)
+        self.var_scroll_canvas.configure(yscrollcommand=var_vscroll.set)
+
+        var_vscroll.pack(side=tk.RIGHT, fill=tk.Y)
+        self.var_scroll_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        self.var_inner_frame = tk.Frame(self.var_scroll_canvas, bg="#FFFFFF")
+        self.var_canvas_window = self.var_scroll_canvas.create_window((0, 0), window=self.var_inner_frame, anchor="nw")
+
+        self.var_canvas = FigureCanvasTkAgg(self.var_fig, master=self.var_inner_frame)
         self.var_canvas.draw()
+        self.var_canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+        def _on_var_inner_configure(event):
+            self.var_scroll_canvas.configure(scrollregion=self.var_scroll_canvas.bbox("all"))
+
+        def _on_var_outer_configure(event):
+            self.var_scroll_canvas.itemconfigure(self.var_canvas_window, width=event.width)
+
+        def _on_var_mousewheel(event):
+            self.var_scroll_canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+
+        self.var_inner_frame.bind("<Configure>", _on_var_inner_configure)
+        self.var_scroll_canvas.bind("<Configure>", _on_var_outer_configure)
+        self.var_scroll_canvas.bind("<Enter>", lambda e: self.var_scroll_canvas.bind_all("<MouseWheel>", _on_var_mousewheel))
+        self.var_scroll_canvas.bind("<Leave>", lambda e: self.var_scroll_canvas.unbind_all("<MouseWheel>"))
 
         self.var_toolbar_frame = tk.Frame(self.tab_var_analysis, bg="#F1F5F9")
         self.var_toolbar_frame.pack(side=tk.BOTTOM, fill=tk.X, padx=6, pady=(0, 4))
         self.var_toolbar = NavigationToolbar2Tk(self.var_canvas, self.var_toolbar_frame)
         self.var_toolbar.update()
-
-        self.var_canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
     def _init_empty_var_chart(self, fig=None):
         target_fig = fig if fig is not None else self.var_fig
@@ -494,17 +463,12 @@ class YahooForecasterGUI(tk.Tk):
             style="italic",
             linespacing=1.5
         )
-        if hasattr(self, "lbl_var_status") and target_fig is self.var_fig:
-            self.lbl_var_status.config(text="• Tidak ada analisis aktif")
 
-    def _plot_shap_panels(self, ax_bar, ax_bee, shap_data, ticker, fig):
-        from matplotlib.colors import Normalize
-        from matplotlib.cm import ScalarMappable
+    def _plot_feature_importance_panel(self, ax_bar, shap_data):
         from matplotlib.patches import Patch
 
         feature_names = shap_data["feature_names"]
         shap_values = np.asarray(shap_data["shap_values"], dtype=float)
-        feature_values = np.asarray(shap_data["feature_values"], dtype=float)
 
         mean_abs = np.abs(shap_values).mean(axis=0)
         top_k = min(15, len(feature_names))
@@ -520,21 +484,94 @@ class YahooForecasterGUI(tk.Tk):
         y_pos = np.arange(len(order))
         ax_bar.barh(y_pos, top_vals, color=bar_colors, height=0.68, alpha=0.9)
         ax_bar.set_yticks(y_pos)
-        ax_bar.set_yticklabels(top_names, fontsize=8)
+        ax_bar.set_yticklabels(top_names, fontsize=8.5)
         ax_bar.set_xlabel("Mean |SHAP Value|", fontsize=8.5)
-        ax_bar.set_title(f"SHAP Feature Importance (Top {top_k} - {ticker})", fontsize=9.5, fontweight="bold", pad=8, color="#1E293B")
+        ax_bar.set_title("Feature Importance", fontsize=10, fontweight="bold", pad=8, color="#1E293B")
         ax_bar.grid(True, axis="x", linestyle="--", alpha=0.35)
 
         max_bar = float(top_vals.max()) if len(top_vals) else 1.0
         ax_bar.set_xlim(0, max_bar * 1.18 if max_bar > 0 else 1.0)
         for y_i, val in enumerate(top_vals):
-            ax_bar.text(val + max_bar * 0.015, y_i, f"{val:.3f}", va="center", fontsize=7.5, color="#334155")
+            ax_bar.text(val + max_bar * 0.012, y_i, f"{val:.3f}", va="center", fontsize=7.8, color="#334155")
 
         legend_handles = [
             Patch(facecolor="#6B21A8", label="Lag Features"),
             Patch(facecolor="#06B6D4", label="Rolling Mean"),
         ]
-        ax_bar.legend(handles=legend_handles, loc="lower right", fontsize=7.5, framealpha=0.9)
+        ax_bar.legend(handles=legend_handles, loc="lower right", fontsize=8, framealpha=0.9)
+
+    def _plot_shap_waterfall_panel(self, ax_wf, shap_data):
+        feature_names = shap_data["feature_names"]
+        shap_values = np.asarray(shap_data["shap_values"], dtype=float)
+        feature_values = np.asarray(shap_data["feature_values"], dtype=float)
+        base_value = float(shap_data.get("base_value", 0.0))
+
+        sample_shap = shap_values[-1]
+        sample_feat = feature_values[-1]
+        max_display = min(10, len(feature_names))
+        abs_order_desc = np.argsort(np.abs(sample_shap))[::-1]
+        top_idx = abs_order_desc[:max_display]
+        rest_idx = abs_order_desc[max_display:]
+
+        labels = []
+        contribs = []
+        if len(rest_idx) > 0:
+            labels.append(f"{len(rest_idx)} fitur lainnya")
+            contribs.append(float(sample_shap[rest_idx].sum()))
+
+        for idx in reversed(top_idx):
+            labels.append(f"{feature_names[idx]} = {sample_feat[idx]:.2f}")
+            contribs.append(float(sample_shap[idx]))
+
+        starts = []
+        running = base_value
+        for c in contribs:
+            starts.append(running)
+            running += c
+        final_val = running
+
+        y_pos = np.arange(len(contribs))
+        colors = ["#E11D48" if c >= 0 else "#2563EB" for c in contribs]
+        lefts = [min(s, s + c) for s, c in zip(starts, contribs)]
+        widths = [abs(c) for c in contribs]
+
+        ax_wf.barh(y_pos, widths, left=lefts, color=colors, height=0.65, alpha=0.88)
+        ax_wf.axvline(base_value, color="#64748B", linestyle="--", linewidth=1.0, label=f"E[f(X)] = {base_value:.3f}")
+        ax_wf.axvline(final_val, color="#0F172A", linestyle="-", linewidth=1.2, label=f"f(x) = {final_val:.3f}")
+
+        all_x = [base_value, final_val] + lefts + [l + w for l, w in zip(lefts, widths)]
+        x_min, x_max = min(all_x), max(all_x)
+        span = (x_max - x_min) if x_max > x_min else 1.0
+        ax_wf.set_xlim(x_min - span * 0.14, x_max + span * 0.18)
+
+        for y_i, (s, c) in enumerate(zip(starts, contribs)):
+            end_x = s + c
+            offset = span * 0.012
+            if c >= 0:
+                ax_wf.text(end_x + offset, y_i, f"+{c:.3f}", va="center", ha="left", fontsize=7.8, color="#BE123C", fontweight="bold")
+            else:
+                ax_wf.text(end_x - offset, y_i, f"{c:.3f}", va="center", ha="right", fontsize=7.8, color="#1D4ED8", fontweight="bold")
+
+        ax_wf.set_yticks(y_pos)
+        ax_wf.set_yticklabels(labels, fontsize=8.3)
+        ax_wf.set_xlabel("Kontribusi terhadap Prediksi", fontsize=8.5)
+        ax_wf.set_title("SHAP Waterfall Plot", fontsize=10, fontweight="bold", pad=8, color="#1E293B")
+        ax_wf.legend(loc="lower right", fontsize=8, framealpha=0.9)
+        ax_wf.grid(True, axis="x", linestyle="--", alpha=0.35)
+
+    def _plot_shap_summary_panel(self, ax_bee, shap_data, fig):
+        from matplotlib.colors import Normalize
+        from matplotlib.cm import ScalarMappable
+
+        feature_names = shap_data["feature_names"]
+        shap_values = np.asarray(shap_data["shap_values"], dtype=float)
+        feature_values = np.asarray(shap_data["feature_values"], dtype=float)
+
+        mean_abs = np.abs(shap_values).mean(axis=0)
+        top_k = min(15, len(feature_names))
+        order = np.argsort(mean_abs)[-top_k:]
+        top_names = [feature_names[i] for i in order]
+        y_pos = np.arange(len(order))
 
         cmap = plt.get_cmap("coolwarm")
         for y_i, feat_idx in enumerate(order):
@@ -554,88 +591,103 @@ class YahooForecasterGUI(tk.Tk):
                 cmap=cmap,
                 vmin=0.0,
                 vmax=1.0,
-                s=14,
+                s=16,
                 alpha=0.75,
                 edgecolors="none"
             )
 
         ax_bee.axvline(0.0, color="#475569", linestyle="--", linewidth=1.0)
         ax_bee.set_yticks(y_pos)
-        ax_bee.set_yticklabels(top_names, fontsize=8)
+        ax_bee.set_yticklabels(top_names, fontsize=8.5)
         ax_bee.set_xlabel("SHAP Value (Dampak Prediksi)", fontsize=8.5)
-        ax_bee.set_title(f"SHAP Summary Impact ({ticker})", fontsize=9.5, fontweight="bold", pad=8, color="#1E293B")
+        ax_bee.set_title("SHAP Summary Plot", fontsize=10, fontweight="bold", pad=8, color="#1E293B")
         ax_bee.grid(True, axis="x", linestyle="--", alpha=0.35)
 
         sm = ScalarMappable(norm=Normalize(vmin=0.0, vmax=1.0), cmap=cmap)
         sm.set_array([])
-        cbar = fig.colorbar(sm, ax=ax_bee, pad=0.02, fraction=0.045)
+        cbar = fig.colorbar(sm, ax=ax_bee, pad=0.02, fraction=0.03)
         cbar.set_ticks([0.0, 1.0])
         cbar.set_ticklabels(["Rendah", "Tinggi"])
         cbar.ax.tick_params(labelsize=7.5)
         cbar.set_label("Nilai Fitur", fontsize=8)
 
-    def _plot_learning_curve_panel(self, ax_lc, lc_data, ticker):
+    def _plot_learning_curve_panel(self, ax_lc, lc_data):
         train_sizes = np.asarray(lc_data["train_sizes"], dtype=float)
-        tr_mean = np.asarray(lc_data["train_mae_mean"], dtype=float)
-        tr_std = np.asarray(lc_data["train_mae_std"], dtype=float)
-        va_mean = np.asarray(lc_data["val_mae_mean"], dtype=float)
-        va_std = np.asarray(lc_data["val_mae_std"], dtype=float)
-        n_splits = lc_data.get("n_splits", 5)
+        if "train_mape_mean" in lc_data:
+            tr_mean = np.asarray(lc_data["train_mape_mean"], dtype=float)
+            tr_std = np.asarray(lc_data["train_mape_std"], dtype=float)
+            va_mean = np.asarray(lc_data["val_mape_mean"], dtype=float)
+            va_std = np.asarray(lc_data["val_mape_std"], dtype=float)
+            tr_label = f"Training MAPE (Akhir: {tr_mean[-1]:.2f}%)"
+            va_label = f"Validation MAPE (Akhir: {va_mean[-1]:.2f}%)"
+            y_label = "MAPE (%)"
+        else:
+            tr_mean = np.asarray(lc_data["train_mae_mean"], dtype=float)
+            tr_std = np.asarray(lc_data["train_mae_std"], dtype=float)
+            va_mean = np.asarray(lc_data["val_mae_mean"], dtype=float)
+            va_std = np.asarray(lc_data["val_mae_std"], dtype=float)
+            tr_label = f"Training MAE (Akhir: {tr_mean[-1]:,.3f})"
+            va_label = f"Validation MAE (Akhir: {va_mean[-1]:,.3f})"
+            y_label = "Mean Absolute Error (MAE)"
 
-        ax_lc.plot(train_sizes, tr_mean, "o-", color="#6B21A8", linewidth=2, markersize=5, label=f"Training MAE (Akhir: {tr_mean[-1]:,.3f})")
+        ax_lc.plot(train_sizes, tr_mean, "o-", color="#6B21A8", linewidth=2, markersize=5, label=tr_label)
         ax_lc.fill_between(train_sizes, np.maximum(0.0, tr_mean - tr_std), tr_mean + tr_std, color="#6B21A8", alpha=0.12)
 
-        ax_lc.plot(train_sizes, va_mean, "s-", color="#0891B2", linewidth=2, markersize=5, label=f"Validation MAE (Akhir: {va_mean[-1]:,.3f})")
+        ax_lc.plot(train_sizes, va_mean, "s-", color="#0891B2", linewidth=2, markersize=5, label=va_label)
         ax_lc.fill_between(train_sizes, np.maximum(0.0, va_mean - va_std), va_mean + va_std, color="#06B6D4", alpha=0.14)
 
-        ax_lc.set_title(f"Learning Curve - Random Forest ({ticker}, {n_splits}-Fold TimeSeriesSplit)", fontsize=9.5, fontweight="bold", pad=8, color="#1E293B")
+        ax_lc.set_title("Learning Curve", fontsize=10, fontweight="bold", pad=8, color="#1E293B")
         ax_lc.set_xlabel("Jumlah Sampel Data Latih", fontsize=8.5)
-        ax_lc.set_ylabel("Mean Absolute Error (MAE)", fontsize=8.5)
+        ax_lc.set_ylabel(y_label, fontsize=8.5)
         ax_lc.legend(loc="upper right", fontsize=8, framealpha=0.9)
         ax_lc.grid(True, linestyle="--", alpha=0.35)
 
-    def _render_var_analysis_figure(self, fig, var_analysis, ticker):
+    def _render_var_analysis_figure(self, fig, var_analysis, ticker, fig_width=9.2):
         has_shap = bool(var_analysis and var_analysis.get("shap"))
         has_lc = bool(var_analysis and var_analysis.get("learning_curve"))
 
         fig.clear()
         if not has_shap and not has_lc:
+            fig.set_size_inches(fig_width, 5.2, forward=True)
             self._init_empty_var_chart(fig)
             return
 
-        if has_shap and has_lc:
-            gs = fig.add_gridspec(2, 2, height_ratios=[1.15, 1.0], hspace=0.42, wspace=0.32)
-            ax_bar = fig.add_subplot(gs[0, 0])
-            ax_bee = fig.add_subplot(gs[0, 1])
-            ax_lc = fig.add_subplot(gs[1, :])
-            self._plot_shap_panels(ax_bar, ax_bee, var_analysis["shap"], ticker, fig)
-            self._plot_learning_curve_panel(ax_lc, var_analysis["learning_curve"], ticker)
-            fig.subplots_adjust(left=0.12, right=0.94, top=0.93, bottom=0.09)
-        elif has_shap:
-            gs = fig.add_gridspec(1, 2, wspace=0.34)
-            ax_bar = fig.add_subplot(gs[0, 0])
-            ax_bee = fig.add_subplot(gs[0, 1])
-            self._plot_shap_panels(ax_bar, ax_bee, var_analysis["shap"], ticker, fig)
-            fig.subplots_adjust(left=0.13, right=0.93, top=0.90, bottom=0.12)
-        else:
-            ax_lc = fig.add_subplot(1, 1, 1)
-            self._plot_learning_curve_panel(ax_lc, var_analysis["learning_curve"], ticker)
-            fig.tight_layout(pad=2.0)
+        panels = []
+        if has_shap:
+            panels.extend(["importance", "waterfall", "summary"])
+        if has_lc:
+            panels.append("learning_curve")
+
+        n_panels = len(panels)
+        fig_height = 5.0 if n_panels == 1 else n_panels * 4.2
+        fig.set_size_inches(fig_width, fig_height, forward=True)
+
+        gs = fig.add_gridspec(n_panels, 1, hspace=0.42)
+        for idx, panel_type in enumerate(panels):
+            ax = fig.add_subplot(gs[idx, 0])
+            if panel_type == "importance":
+                self._plot_feature_importance_panel(ax, var_analysis["shap"])
+            elif panel_type == "waterfall":
+                self._plot_shap_waterfall_panel(ax, var_analysis["shap"])
+            elif panel_type == "summary":
+                self._plot_shap_summary_panel(ax, var_analysis["shap"], fig)
+            elif panel_type == "learning_curve":
+                self._plot_learning_curve_panel(ax, var_analysis["learning_curve"])
+
+        top_m = 0.965 if n_panels > 1 else 0.90
+        bot_m = 0.045 if n_panels > 1 else 0.13
+        fig.subplots_adjust(left=0.20, right=0.92, top=top_m, bottom=bot_m)
 
     def _render_var_analysis_tab(self, var_analysis, ticker):
-        self._render_var_analysis_figure(self.var_fig, var_analysis, ticker)
+        self._render_var_analysis_figure(self.var_fig, var_analysis, ticker, fig_width=9.0)
+        dpi = self.var_fig.get_dpi()
+        w_px = int(self.var_fig.get_figwidth() * dpi)
+        h_px = int(self.var_fig.get_figheight() * dpi)
+        self.var_canvas.get_tk_widget().configure(width=w_px, height=h_px)
         self.var_canvas.draw()
-
-        active_parts = []
-        if var_analysis and var_analysis.get("shap"):
-            active_parts.append("SHAP analysis")
-        if var_analysis and var_analysis.get("learning_curve"):
-            active_parts.append("Learning Curve")
-
-        if active_parts:
-            self.lbl_var_status.config(text=f"• Aktif: {', '.join(active_parts)}")
-        else:
-            self.lbl_var_status.config(text="• Tidak ada analisis aktif")
+        self.var_inner_frame.update_idletasks()
+        self.var_scroll_canvas.configure(scrollregion=self.var_scroll_canvas.bbox("all"))
+        self.var_scroll_canvas.yview_moveto(0.0)
 
     def _action_popup_var_chart(self):
         var_analysis = self.last_results.get("var_analysis") if self.last_results else None
@@ -644,27 +696,57 @@ class YahooForecasterGUI(tk.Tk):
             return
 
         ticker = self.last_results["ticker"]
-        pop_fig = plt.figure(figsize=(13, 8.5), facecolor="white")
-        self._render_var_analysis_figure(pop_fig, var_analysis, ticker)
+        pop_win = tk.Toplevel(self)
+        pop_win.title(f"Yahoo Finance Forecaster - Analisis Variabel {ticker} (HD)")
+        pop_win.geometry("1080x780")
+        pop_win.configure(bg="#FFFFFF")
 
-        try:
-            mngr = pop_fig.canvas.manager
-            mngr.set_window_title(f"Yahoo Finance Forecaster - Analisis Variabel {ticker} (HD)")
-            if hasattr(mngr, "window"):
-                mngr.window.deiconify()
-                mngr.window.attributes("-topmost", True)
-                mngr.window.lift()
-        except Exception:
-            pass
+        scroll_canvas = tk.Canvas(pop_win, bg="#FFFFFF", highlightthickness=0)
+        vscroll = ttk.Scrollbar(pop_win, orient="vertical", command=scroll_canvas.yview)
+        scroll_canvas.configure(yscrollcommand=vscroll.set)
 
-        plt.show()
+        vscroll.pack(side=tk.RIGHT, fill=tk.Y)
+        scroll_canvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+        inner = tk.Frame(scroll_canvas, bg="#FFFFFF")
+        win_id = scroll_canvas.create_window((0, 0), window=inner, anchor="nw")
+
+        pop_fig = plt.figure(figsize=(10.2, 6.0), facecolor="white")
+        self._render_var_analysis_figure(pop_fig, var_analysis, ticker, fig_width=10.2)
+
+        pop_canvas = FigureCanvasTkAgg(pop_fig, master=inner)
+        dpi = pop_fig.get_dpi()
+        pop_canvas.get_tk_widget().configure(width=int(pop_fig.get_figwidth() * dpi), height=int(pop_fig.get_figheight() * dpi))
+        pop_canvas.draw()
+        pop_canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+        tb_frame = tk.Frame(pop_win, bg="#F1F5F9")
+        tb_frame.pack(side=tk.BOTTOM, fill=tk.X)
+        tb = NavigationToolbar2Tk(pop_canvas, tb_frame)
+        tb.update()
+
+        inner.bind("<Configure>", lambda e: scroll_canvas.configure(scrollregion=scroll_canvas.bbox("all")))
+        scroll_canvas.bind("<Configure>", lambda e: scroll_canvas.itemconfigure(win_id, width=e.width))
+
+        def _on_pop_wheel(event):
+            scroll_canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+
+        scroll_canvas.bind("<Enter>", lambda e: scroll_canvas.bind_all("<MouseWheel>", _on_pop_wheel))
+        scroll_canvas.bind("<Leave>", lambda e: scroll_canvas.unbind_all("<MouseWheel>"))
+
+        def _on_pop_close():
+            try:
+                scroll_canvas.unbind_all("<MouseWheel>")
+            except Exception:
+                pass
+            plt.close(pop_fig)
+            pop_win.destroy()
+
+        pop_win.protocol("WM_DELETE_WINDOW", _on_pop_close)
 
     def _setup_log_tab(self):
         log_top_bar = tk.Frame(self.tab_log, bg=self.colors["bg"])
         log_top_bar.pack(side=tk.TOP, fill=tk.X, pady=(6, 6), padx=6)
-
-        lbl_log_title = tk.Label(log_top_bar, text="Terminal Log Proses Real-time", bg=self.colors["bg"], font=("Segoe UI", 10, "bold"), fg=self.colors["primary_dark"])
-        lbl_log_title.pack(side=tk.LEFT, pady=2)
 
         btn_clear_log = ttk.Button(log_top_bar, text="Bersihkan Log", style="Quick.TButton", command=self._action_clear_log)
         btn_clear_log.pack(side=tk.RIGHT, padx=4)
@@ -691,15 +773,6 @@ class YahooForecasterGUI(tk.Tk):
         title_wrap = tk.Frame(hist_top_bar, bg=self.colors["bg"])
         title_wrap.pack(side=tk.LEFT, pady=2)
 
-        lbl_hist_title = tk.Label(
-            title_wrap,
-            text="🕒 Riwayat Peramalan",
-            bg=self.colors["bg"],
-            font=("Segoe UI", 10, "bold"),
-            fg=self.colors["primary_dark"]
-        )
-        lbl_hist_title.pack(side=tk.LEFT)
-
         self.lbl_hist_count = tk.Label(
             title_wrap,
             text="(0 entri)",
@@ -707,13 +780,12 @@ class YahooForecasterGUI(tk.Tk):
             font=("Segoe UI", 9),
             fg=self.colors["text_muted"]
         )
-        self.lbl_hist_count.pack(side=tk.LEFT, padx=(6, 0))
+        self.lbl_hist_count.pack(side=tk.LEFT)
 
         btn_frame = tk.Frame(hist_top_bar, bg=self.colors["bg"])
         btn_frame.pack(side=tk.RIGHT)
 
         ttk.Button(btn_frame, text="📂 Muat Hasil", style="Primary.TButton", command=self._action_load_history).pack(side=tk.LEFT, padx=(0, 4))
-        ttk.Button(btn_frame, text="⚙️ Pakai Parameter", style="Accent.TButton", command=self._action_apply_history_params).pack(side=tk.LEFT, padx=(0, 4))
         ttk.Button(btn_frame, text="🗑️ Hapus", style="Quick.TButton", command=self._action_delete_history).pack(side=tk.LEFT, padx=(0, 4))
         ttk.Button(btn_frame, text="🧹 Bersihkan", style="Quick.TButton", command=self._action_clear_history).pack(side=tk.LEFT)
 
@@ -834,6 +906,7 @@ class YahooForecasterGUI(tk.Tk):
                 "feature_names": list(shap_d["feature_names"]),
                 "shap_values": np.asarray(shap_d["shap_values"], dtype=float).tolist(),
                 "feature_values": np.asarray(shap_d["feature_values"], dtype=float).tolist(),
+                "base_value": float(shap_d.get("base_value", 0.0)),
             }
         if var_analysis.get("learning_curve"):
             serialized_var_analysis["learning_curve"] = var_analysis["learning_curve"]
@@ -947,7 +1020,6 @@ class YahooForecasterGUI(tk.Tk):
         if not entry:
             return
         self._apply_form_params(entry)
-        self.lbl_status.config(text=f"Parameter dari riwayat {entry['ticker']} diisikan ke form.")
         self._log(f"Parameter riwayat dimuat ke form: {entry['ticker']} ({entry['start_date']} s/d {entry['end_date']}, {entry['freq']}, {entry['steps']} steps).")
 
     def _action_load_history(self):
@@ -1000,7 +1072,6 @@ class YahooForecasterGUI(tk.Tk):
             bundle["freq_desc"],
             bundle["steps"],
         )
-        self.lbl_status.config(text=f"Menampilkan hasil riwayat {bundle['ticker']} ({entry['timestamp']}).")
         self._log(f"Riwayat dimuat: {bundle['ticker']} ({entry['timestamp']}).")
         self._display_results(bundle, save_history=False)
 
@@ -1131,7 +1202,6 @@ class YahooForecasterGUI(tk.Tk):
         steps = self.spn_steps.get().strip()
 
         self._log(f"Memeriksa informasi ticker: {ticker}...")
-        self.lbl_status.config(text=f"Mengecek ticker {ticker}...")
 
         def worker():
             try:
@@ -1144,15 +1214,12 @@ class YahooForecasterGUI(tk.Tk):
                 if not name:
                     self.after(0, lambda: messagebox.showerror("Error", f"Ticker '{ticker}' tidak ditemukan atau data tidak tersedia di Yahoo Finance!"))
                     self.after(0, lambda: self._log(f"Gagal: Ticker '{ticker}' tidak valid."))
-                    self.after(0, lambda: self.lbl_status.config(text="Ticker tidak valid."))
                     return
 
                 self.after(0, lambda: self._update_company_info(name, sector, industry, ticker, start_date, end_date, freq_str, steps))
                 self.after(0, lambda: self._log(f"Ticker valid: {name} | Sektor: {sector}"))
-                self.after(0, lambda: self.lbl_status.config(text=f"Ticker '{ticker}' valid."))
             except Exception as e:
                 self.after(0, lambda: messagebox.showerror("Error", f"Gagal mengambil info ticker: {str(e)}"))
-                self.after(0, lambda: self.lbl_status.config(text="Gagal mengecek ticker."))
 
         threading.Thread(target=worker, daemon=True).start()
 
@@ -1214,10 +1281,8 @@ class YahooForecasterGUI(tk.Tk):
         self.is_running = True
         self.btn_run.config(state="disabled")
         self.btn_reset.config(state="disabled")
-        self.chk_shap.config(state="disabled")
-        self.chk_lc.config(state="disabled")
+        self.btn_settings.config(state="disabled")
         self.pbar["value"] = 0
-        self.lbl_status.config(text="Memulai proses peramalan...")
         self._log(f"=== Memulai Peramalan untuk {ticker} ===")
         self._log(f"Rentang: {start_date} s/d {end_date} | Frekuensi: {freq_desc} | Steps: {steps}")
         self._log("Model: ForecasterDirect (10 Lags, 10 Rolling Means, 100 Trees - Fixed)")
@@ -1235,7 +1300,6 @@ class YahooForecasterGUI(tk.Tk):
         try:
             freq_desc = "B (Business Days)" if freq == "B" else "D (Days)"
 
-            self.after(0, lambda: self.lbl_status.config(text="Mengunduh informasi perusahaan..."))
             try:
                 t_obj = yf.Ticker(ticker)
                 info = t_obj.info or {}
@@ -1247,7 +1311,6 @@ class YahooForecasterGUI(tk.Tk):
             industry = info.get('industry', 'N/A')
             self.after(0, lambda: self._update_company_info(name, sector, industry, ticker, start_date, end_date, freq_desc, steps))
 
-            self.after(0, lambda: self.lbl_status.config(text="Mengunduh data historis harga saham..."))
             self.after(0, lambda: self._log(f"Mengunduh data {ticker} dari Yahoo Finance..."))
 
             df_raw = yf.download(ticker, start=start_date, end=end_date, progress=False)
@@ -1285,7 +1348,6 @@ class YahooForecasterGUI(tk.Tk):
             lags = 10
             n_estimators = 100
 
-            self.after(0, lambda: self.lbl_status.config(text="[1/2] Melatih Model Peramalan..."))
             self.after(0, lambda: self._log("Tahap 1/2: Melatih Model Peramalan..."))
             self.after(0, lambda: self.pbar.config(value=30))
 
@@ -1307,7 +1369,6 @@ class YahooForecasterGUI(tk.Tk):
             self.after(0, lambda: self._log("Ringkasan Fitur: 10 Lags + 10 Rolling Means (20 Fitur Prediktor)"))
             self.after(0, lambda: self.pbar.config(value=65))
 
-            self.after(0, lambda: self.lbl_status.config(text="[2/2] Melakukan Peramalan..."))
             self.after(0, lambda: self._log(f"Tahap 2/2: Melakukan Peramalan ({steps} steps)..."))
 
             forecaster_final = ForecasterDirect(
@@ -1327,7 +1388,6 @@ class YahooForecasterGUI(tk.Tk):
                 first_step = list(forecaster_final.estimators_.keys())[0]
 
                 if use_shap:
-                    self.after(0, lambda: self.lbl_status.config(text="Menghitung SHAP analysis..."))
                     self.after(0, lambda: self._log("Menghitung SHAP analysis (TreeExplainer)..."))
                     if shap is None:
                         self.after(0, lambda: self._log("Peringatan: Pustaka 'shap' belum terpasang. SHAP analysis dilewati."))
@@ -1337,42 +1397,58 @@ class YahooForecasterGUI(tk.Tk):
                         shap_vals = np.asarray(explainer.shap_values(X_sample), dtype=float)
                         if shap_vals.ndim == 3:
                             shap_vals = shap_vals[0]
+                        base_val = float(np.asarray(explainer.expected_value).reshape(-1)[0])
                         var_analysis["shap"] = {
                             "feature_names": list(X_sample.columns),
                             "shap_values": shap_vals,
                             "feature_values": X_sample.to_numpy(dtype=float),
+                            "base_value": base_val,
                         }
                         self.after(0, lambda n=len(X_sample): self._log(f"SHAP analysis selesai ({n} sampel)."))
 
                 if use_lc:
-                    self.after(0, lambda: self.lbl_status.config(text="Menghitung Learning Curve..."))
-                    self.after(0, lambda: self._log("Menghitung Learning Curve (TimeSeriesSplit CV)..."))
+                    self.after(0, lambda: self._log("Menghitung Learning Curve (MAPE - TimeSeriesSplit CV)..."))
                     y_target = y_train_dict[first_step]
+                    y_prev_series = data.shift(1).loc[y_target.index].to_numpy(dtype=float)
+                    y_true_price = data.loc[y_target.index].to_numpy(dtype=float)
                     n_splits = min(5, max(2, len(X_train) // 5))
                     cv = TimeSeriesSplit(n_splits=n_splits)
-                    train_sizes, train_scores, val_scores = learning_curve(
-                        RandomForestRegressor(n_estimators=n_estimators, random_state=42, n_jobs=-1),
-                        X_train,
-                        y_target,
-                        cv=cv,
-                        scoring="neg_mean_absolute_error",
-                        train_sizes=np.linspace(0.3, 1.0, 5),
-                        n_jobs=-1,
-                    )
-                    train_mae = -train_scores
-                    val_mae = -val_scores
+                    splits = list(cv.split(X_train))
+                    min_train_len = min(len(tr_idx) for tr_idx, _ in splits)
+                    train_sizes_abs = np.unique(np.maximum(2, np.round(np.linspace(0.3, 1.0, 5) * min_train_len).astype(int)))
+
+                    train_mape_rows = []
+                    val_mape_rows = []
+                    for sz in train_sizes_abs:
+                        fold_tr = []
+                        fold_va = []
+                        for tr_idx, va_idx in splits:
+                            sub_tr = tr_idx[:sz]
+                            est = RandomForestRegressor(n_estimators=n_estimators, random_state=42, n_jobs=-1)
+                            est.fit(X_train.iloc[sub_tr], y_target.iloc[sub_tr])
+
+                            pred_tr_price = y_prev_series[sub_tr] + est.predict(X_train.iloc[sub_tr])
+                            pred_va_price = y_prev_series[va_idx] + est.predict(X_train.iloc[va_idx])
+
+                            fold_tr.append(mean_absolute_percentage_error(y_true_price[sub_tr], pred_tr_price) * 100.0)
+                            fold_va.append(mean_absolute_percentage_error(y_true_price[va_idx], pred_va_price) * 100.0)
+                        train_mape_rows.append(fold_tr)
+                        val_mape_rows.append(fold_va)
+
+                    train_mape_arr = np.asarray(train_mape_rows, dtype=float)
+                    val_mape_arr = np.asarray(val_mape_rows, dtype=float)
                     var_analysis["learning_curve"] = {
-                        "train_sizes": train_sizes.tolist(),
-                        "train_mae_mean": train_mae.mean(axis=1).tolist(),
-                        "train_mae_std": train_mae.std(axis=1).tolist(),
-                        "val_mae_mean": val_mae.mean(axis=1).tolist(),
-                        "val_mae_std": val_mae.std(axis=1).tolist(),
+                        "metric": "MAPE",
+                        "train_sizes": train_sizes_abs.tolist(),
+                        "train_mape_mean": train_mape_arr.mean(axis=1).tolist(),
+                        "train_mape_std": train_mape_arr.std(axis=1).tolist(),
+                        "val_mape_mean": val_mape_arr.mean(axis=1).tolist(),
+                        "val_mape_std": val_mape_arr.std(axis=1).tolist(),
                         "n_splits": int(n_splits),
                     }
-                    self.after(0, lambda s=n_splits: self._log(f"Learning Curve selesai ({s}-Fold TimeSeriesSplit)."))
+                    self.after(0, lambda s=n_splits: self._log(f"Learning Curve selesai ({s}-Fold TimeSeriesSplit, MAPE)."))
 
             self.after(0, lambda: self.pbar.config(value=100))
-            self.after(0, lambda: self.lbl_status.config(text="Peramalan selesai dengan sukses!"))
             self.after(0, lambda: self._log("Peramalan Berhasil Diselesaikan!"))
 
             bundle = {
@@ -1403,16 +1479,62 @@ class YahooForecasterGUI(tk.Tk):
             err_msg = str(e)
             self.after(0, lambda: messagebox.showerror("Kesalahan", f"Terjadi kesalahan saat memproses:\n{err_msg}"))
             self.after(0, lambda: self._log(f"ERROR: {err_msg}"))
-            self.after(0, lambda: self.lbl_status.config(text="Proses gagal."))
         finally:
             self.after(0, self._finish_process)
+
+    def _update_settings_btn_text(self, *args):
+        active_count = int(bool(self.var_use_shap.get())) + int(bool(self.var_use_lc.get()))
+        if active_count > 0:
+            self.btn_settings.config(text=f"⚙️ PENGATURAN ({active_count} Aktif)")
+        else:
+            self.btn_settings.config(text="⚙️ PENGATURAN")
+
+    def _open_settings_dialog(self):
+        if self.is_running:
+            return
+
+        dlg = tk.Toplevel(self)
+        dlg.title("Pengaturan")
+        dlg.configure(bg=self.colors["bg"])
+        dlg.resizable(False, False)
+        dlg.transient(self)
+        dlg.grab_set()
+
+        container = tk.Frame(dlg, bg=self.colors["card_bg"], bd=1, relief="solid")
+        container.pack(fill=tk.BOTH, expand=True, padx=14, pady=14)
+
+        inner = tk.Frame(container, bg=self.colors["card_bg"])
+        inner.pack(fill=tk.BOTH, expand=True, padx=20, pady=16)
+
+        tmp_shap = tk.BooleanVar(dlg, value=self.var_use_shap.get())
+        tmp_lc = tk.BooleanVar(dlg, value=self.var_use_lc.get())
+
+        ttk.Checkbutton(inner, text="SHAP analysis", variable=tmp_shap, style="Settings.TCheckbutton").pack(anchor="w", pady=(0, 8))
+        ttk.Checkbutton(inner, text="Learning Curve", variable=tmp_lc, style="Settings.TCheckbutton").pack(anchor="w", pady=(0, 16))
+
+        btn_row = tk.Frame(inner, bg=self.colors["card_bg"])
+        btn_row.pack(anchor="center")
+
+        def _save_settings():
+            self.var_use_shap.set(tmp_shap.get())
+            self.var_use_lc.set(tmp_lc.get())
+            dlg.destroy()
+
+        ttk.Button(btn_row, text="Simpan", style="Primary.TButton", command=_save_settings).pack(side=tk.LEFT, padx=(0, 8))
+        ttk.Button(btn_row, text="Batal", style="Reset.TButton", command=dlg.destroy).pack(side=tk.LEFT)
+
+        dlg.update_idletasks()
+        w = max(250, dlg.winfo_reqwidth())
+        h = dlg.winfo_reqheight()
+        x = self.winfo_rootx() + (self.winfo_width() - w) // 2
+        y = self.winfo_rooty() + (self.winfo_height() - h) // 2
+        dlg.geometry(f"{w}x{h}+{max(0, x)}+{max(0, y)}")
 
     def _finish_process(self):
         self.is_running = False
         self.btn_run.config(state="normal")
         self.btn_reset.config(state="normal")
-        self.chk_shap.config(state="normal")
-        self.chk_lc.config(state="normal")
+        self.btn_settings.config(state="normal")
 
     def _action_reset_form(self):
         if self.is_running:
@@ -1437,10 +1559,8 @@ class YahooForecasterGUI(tk.Tk):
 
         self.lbl_mape.config(text="- %")
         self.lbl_mae.config(text="-")
-        self.lbl_hyperparams.config(text="Model: ForecasterDirect (10 Lags, 10 Roll Mean, 100 Trees)")
 
         self.pbar["value"] = 0
-        self.lbl_status.config(text="Seluruh kotak isian berhasil direset.")
 
         for item in self.tree.get_children():
             self.tree.delete(item)
@@ -1464,9 +1584,6 @@ class YahooForecasterGUI(tk.Tk):
 
         self.lbl_mape.config(text=f"{b['mape']:.2f}%")
         self.lbl_mae.config(text=f"{b['mae']:,.2f}")
-        self.lbl_hyperparams.config(
-            text=f"Direct ({b['steps']} stp) | Trees={b['n_estimators']} | Lags={b['lags']} | 10 Rolling Means (1..10) | Diff=1"
-        )
 
         for item in self.tree.get_children():
             self.tree.delete(item)
